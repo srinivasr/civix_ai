@@ -1,5 +1,5 @@
 # 🚀 Civix AI  
-### 🧠 AI-Powered Booth Civic Intelligence Platform  
+### 🧠 AI-Powered Booth Civic Intelligence Platform 
 
 <p align="center">
   <img src="https://readme-typing-svg.herokuapp.com?size=28&duration=3000&color=1E90FF&center=true&vCenter=true&width=700&lines=AI-Powered+Booth+Intelligence;Graph-Based+Civic+Analytics;Predictive+Governance+Engine" />

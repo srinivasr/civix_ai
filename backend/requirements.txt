@@ -1,11 +1,15 @@
 annotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.12.1
+certifi==2026.1.4
 click==8.3.1
 fastapi==0.133.0
 h11==0.16.0
+httpcore==1.0.9
+httpx==0.28.1
 idna==3.11
 neo4j==6.1.0
+ollama==0.6.1
 pydantic==2.12.5
 pydantic_core==2.41.5
 python-dotenv==1.2.1

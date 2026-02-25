@@ -1,0 +1,76 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual Environment
+.venv/
+env/
+ENV/
+
+# Environment Variables
+.env
+.env.*
+
+# Python build files
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Logs
+*.log
+
+# =========================
+# FastAPI / Uvicorn
+# =========================
+*.sqlite3
+
+# =========================
+# Node / Frontend
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Frontend build output
+dist/
+build/
+
+# =========================
+# VS Code
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Neo4j Local Data (if any)
+# =========================
+neo4j/data/
+neo4j/logs/
+
+# =========================
+# Coverage Reports
+# =========================
+htmlcov/
+.coverage
+coverage.xml
+
+# =========================
+# Temporary files
+# =========================
+*.swp
+*.tmp
+*.bak

@@ -5,8 +5,7 @@ from app.core.config import settings
 class Neo4jAdapter:
     def __init__(self):
         self.driver = AsyncGraphDatabase.driver(
-            settings.NEO4J_URI,
-            auth=(settings.NEO4J_USERNAME, settings.NEO4J_PASSWORD)
+            settings.NEO4J_URI, auth=(settings.NEO4J_USERNAME, settings.NEO4J_PASSWORD)
         )
 
     async def close(self):

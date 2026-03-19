@@ -9,7 +9,7 @@ def process_voters(df):
         MERGE (b:Booth {booth_id: $booth_id})
         MERGE (h:House {house_no: $house_no})
         MERGE (v:Voter {voter_id: $voter_id})
-        SET v.name = $name
+        SET v.name = $name, v.age = $age, v.gender = $gender
         MERGE (v)-[:LIVES_IN]->(h)
         MERGE (h)-[:PART_OF]->(b)
         """
@@ -17,8 +17,10 @@ def process_voters(df):
             query,
             {
                 "voter_id": int(row["voter_id"]),
-                "name": row["name"],
-                "house_no": row["house_no"],
+                "name": str(row["name"]).strip(),
+                "age": int(row["age"]),
+                "gender": str(row["gender"]).strip(),
+                "house_no": str(row["house_no"]).strip(),
                 "booth_id": int(row["booth_id"]),
             },
         )
@@ -45,14 +47,14 @@ def process_complaints(df):
         MERGE (c)-[:BELONGS_TO]->(i)
         """
 
-        result = neo4j_client.run_query(
+        neo4j_client.run_query(
             query,
             {
                 "complaint_id": int(row["complaint_id"]),
                 "voter_id": int(row["voter_id"]),
-                "issue_type": row["issue_type"],
-                "timestamp": row["timestamp"],
-                "status": row["status"],
+                "issue_type": str(row["issue_type"]).strip(),
+                "timestamp": str(row["timestamp"]).strip(),
+                "status": str(row["status"]).strip(),
             },
         )
 

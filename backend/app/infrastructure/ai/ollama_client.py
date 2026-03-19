@@ -22,7 +22,15 @@ RULES:
 - Use ONLY labels, relationship types, and property keys from the schema above.
 - NEVER use DELETE, CREATE, MERGE, SET, REMOVE, DROP, or DETACH.
 - Always use MATCH and RETURN.
+- IMPORTANT: For string properties (like gender, issue, name), NEVER use direct dictionary matches (e.g. {{gender: 'Male'}} or {{gender: toLower('male')}}). ALWAYS use a WHERE clause with `toLower()` (e.g. `WHERE toLower(v.gender) = 'male'`).
 - If the question cannot be answered with the schema, return: MATCH (n) RETURN n LIMIT 0
+
+EXAMPLES:
+Question: "list all the male voters"
+Cypher: MATCH (v:Voter) WHERE toLower(v.gender) = 'male' RETURN v
+
+Question: "show me open complaints"
+Cypher: MATCH (c:Complaint) WHERE toLower(c.status) = 'open' RETURN c
 
 QUESTION: {question}
 
@@ -44,7 +52,7 @@ CYPHER:"""
         # Strip markdown fences if the model wraps the output
         if cypher.startswith("```"):
             lines = cypher.split("\n")
-            lines = [l for l in lines if not l.startswith("```")]
+            lines = [line for line in lines if not line.startswith("```")]
             cypher = "\n".join(lines).strip()
 
         return cypher

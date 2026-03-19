@@ -1,2 +1,6 @@
-# Shared dependencies for API endpoints (e.g., DB sessions, auth)
-# TODO: Add dependency injection for Neo4j client and auth guards
+from app.infrastructure.db.neo4j_client import neo4j_client
+
+
+def get_neo4j_dependency():
+    """Dependency injection for Neo4j client."""
+    return neo4j_client

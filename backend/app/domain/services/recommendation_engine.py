@@ -1,5 +1,6 @@
 from app.infrastructure.db.neo4j_client import neo4j_client
 
+
 def generate_recommendations():
     # Set recommendation based on most frequent issue_type per Booth
     query = """
@@ -19,7 +20,7 @@ def generate_recommendations():
         END
     """
     neo4j_client.run_query(query)
-    
+
     # Set default recommendation for booths with no complaints or missing data
     default_query = """
     MATCH (b:Booth)
@@ -27,5 +28,5 @@ def generate_recommendations():
     SET b.recommendation = "No action required"
     """
     neo4j_client.run_query(default_query)
-    
+
     return {"status": "recommendations generated"}

@@ -25,14 +25,35 @@ class Neo4jClient:
         """Fetch labels, relationship types, and property keys from Neo4j
         and return a human-readable schema string for the LLM prompt."""
         with self.driver.session() as session:
-            labels = [r["label"] for r in session.run("CALL db.labels() YIELD label RETURN label")]
-            rel_types = [r["relationshipType"] for r in session.run("CALL db.relationshipTypes() YIELD relationshipType RETURN relationshipType")]
-            prop_keys = [r["propertyKey"] for r in session.run("CALL db.propertyKeys() YIELD propertyKey RETURN propertyKey")]
+            labels = [
+                r["label"]
+                for r in session.run("CALL db.labels() YIELD label RETURN label")
+            ]
+            rel_types = [
+                r["relationshipType"]
+                for r in session.run(
+                    "CALL db.relationshipTypes() YIELD relationshipType RETURN relationshipType"
+                )
+            ]
+            prop_keys = [
+                r["propertyKey"]
+                for r in session.run(
+                    "CALL db.propertyKeys() YIELD propertyKey RETURN propertyKey"
+                )
+            ]
 
         lines = [
             "Node Labels: " + ", ".join(labels) if labels else "Node Labels: (none)",
-            "Relationship Types: " + ", ".join(rel_types) if rel_types else "Relationship Types: (none)",
-            "Property Keys: " + ", ".join(prop_keys) if prop_keys else "Property Keys: (none)",
+            (
+                "Relationship Types: " + ", ".join(rel_types)
+                if rel_types
+                else "Relationship Types: (none)"
+            ),
+            (
+                "Property Keys: " + ", ".join(prop_keys)
+                if prop_keys
+                else "Property Keys: (none)"
+            ),
         ]
         return "\n".join(lines)
 
@@ -73,12 +94,14 @@ class Neo4jClient:
         def _add_relationship(rel: Relationship):
             _add_node(rel.start_node)
             _add_node(rel.end_node)
-            edges_list.append({
-                "from": rel.start_node.element_id,
-                "to": rel.end_node.element_id,
-                "label": rel.type,
-                "properties": dict(rel),
-            })
+            edges_list.append(
+                {
+                    "from": rel.start_node.element_id,
+                    "to": rel.end_node.element_id,
+                    "label": rel.type,
+                    "properties": dict(rel),
+                }
+            )
 
         def _process_value(val):
             if isinstance(val, Node):

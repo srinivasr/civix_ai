@@ -1,6 +1,6 @@
 """Seed Neo4j with CSV data from the uploads directory."""
+
 import sys
-import os
 from pathlib import Path
 
 # Ensure the backend root is on the path

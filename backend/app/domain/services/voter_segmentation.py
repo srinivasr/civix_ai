@@ -1,5 +1,6 @@
 from app.infrastructure.db.neo4j_client import neo4j_client
 
+
 def categorize_voters():
     query = """
     MATCH (v:Voter)

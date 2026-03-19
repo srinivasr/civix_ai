@@ -1,5 +1,6 @@
 from app.infrastructure.db.neo4j_client import neo4j_client
 
+
 def update_risk_scores():
     query = """
     MATCH (b:Booth)

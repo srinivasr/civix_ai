@@ -21,4 +21,6 @@ def ask(request: AskRequest):
         result = ask_question(request.question)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to process question: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to process question: {str(e)}"
+        )

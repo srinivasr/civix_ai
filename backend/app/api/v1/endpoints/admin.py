@@ -13,7 +13,9 @@ def get_admin_overview():
         RETURN count(b) AS total_booths
         """
         total_booths_result = neo4j_client.run_query(total_booths_query)
-        total_booths = total_booths_result[0]["total_booths"] if total_booths_result else 0
+        total_booths = (
+            total_booths_result[0]["total_booths"] if total_booths_result else 0
+        )
 
         # Total complaints
         total_complaints_query = """
@@ -21,7 +23,11 @@ def get_admin_overview():
         RETURN count(c) AS total_complaints
         """
         total_complaints_result = neo4j_client.run_query(total_complaints_query)
-        total_complaints = total_complaints_result[0]["total_complaints"] if total_complaints_result else 0
+        total_complaints = (
+            total_complaints_result[0]["total_complaints"]
+            if total_complaints_result
+            else 0
+        )
 
         # Aggregate booth metrics
         metrics_query = """
@@ -49,7 +55,9 @@ def get_admin_overview():
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch overview: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to fetch overview: {str(e)}"
+        )
 
 
 @router.get("/booths")
@@ -85,4 +93,5 @@ def get_recommendations():
 @router.get("/messages")
 def get_messages():
     from app.domain.services.message_generator import generate_booth_messages
+
     return generate_booth_messages()

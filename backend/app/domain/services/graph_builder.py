@@ -1,6 +1,7 @@
 from app.infrastructure.db.neo4j_client import neo4j_client
 from app.domain.services.graph_enrichment import update_booth_metrics
 
+
 def process_voters(df):
     count = 0
     for _, row in df.iterrows():
@@ -12,15 +13,19 @@ def process_voters(df):
         MERGE (v)-[:LIVES_IN]->(h)
         MERGE (h)-[:PART_OF]->(b)
         """
-        neo4j_client.run_query(query, {
-            "voter_id": int(row["voter_id"]),
-            "name": row["name"],
-            "house_no": row["house_no"],
-            "booth_id": int(row["booth_id"])
-        })
+        neo4j_client.run_query(
+            query,
+            {
+                "voter_id": int(row["voter_id"]),
+                "name": row["name"],
+                "house_no": row["house_no"],
+                "booth_id": int(row["booth_id"]),
+            },
+        )
         count += 1
 
     return {"voters_processed": count}
+
 
 def process_complaints(df):
     count = 0
@@ -40,13 +45,16 @@ def process_complaints(df):
         MERGE (c)-[:BELONGS_TO]->(i)
         """
 
-        result = neo4j_client.run_query(query, {
-            "complaint_id": int(row["complaint_id"]),
-            "voter_id": int(row["voter_id"]),
-            "issue_type": row["issue_type"],
-            "timestamp": row["timestamp"],
-            "status": row["status"]
-        })
+        result = neo4j_client.run_query(
+            query,
+            {
+                "complaint_id": int(row["complaint_id"]),
+                "voter_id": int(row["voter_id"]),
+                "issue_type": row["issue_type"],
+                "timestamp": row["timestamp"],
+                "status": row["status"],
+            },
+        )
 
         count += 1
     update_booth_metrics()

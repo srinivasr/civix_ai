@@ -18,19 +18,23 @@ SCHEMA:
 {schema}
 
 RULES:
-- Return ONLY the Cypher query, no explanations, no markdown fences.
-- Use ONLY labels, relationship types, and property keys from the schema above.
-- NEVER use DELETE, CREATE, MERGE, SET, REMOVE, DROP, or DETACH.
-- Always use MATCH and RETURN.
-- IMPORTANT: For string properties (like gender, issue, name), NEVER use direct dictionary matches (e.g. {{gender: 'Male'}} or {{gender: toLower('male')}}). ALWAYS use a WHERE clause with `toLower()` (e.g. `WHERE toLower(v.gender) = 'male'`).
-- If the question cannot be answered with the schema, return: MATCH (n) RETURN n LIMIT 0
+1. SCHEMA STRICTNESS: Use ONLY labels, relationship types, and properties provided in the schema. Do NOT hallucinate or invent properties.
+2. STRING MATCHING (CRITICAL): For string properties, NEVER use exact dictionary matches (e.g. {{gender: 'Male'}}). ALWAYS use a case-insensitive WHERE clause. For robustness, prefer CONTAINS for partial matching where appropriate: `WHERE toLower(v.name) CONTAINS 'sharma'`.
+3. NUMERICAL MATCHING: DO NOT use string functions (`toLower()`) or string quotes (`'50'`) for numerical properties (like `age`, `booth_id`). Compare them natively: `WHERE v.age > 50`.
+4. RETURN GRAPH ENTITIES: Always RETURN the actual nodes or relationships (e.g., `RETURN v, c`), NOT just their properties (e.g., avoid `RETURN v.name`). This is required for the application's graph visualization.
+5. READ-ONLY: NEVER use DELETE, CREATE, MERGE, SET, REMOVE, DROP, or DETACH. Only use MATCH, OPTIONAL MATCH, WITH, and RETURN.
+6. FALLBACK: If the question cannot be answered with the given schema, return exactly: MATCH (n) RETURN n LIMIT 0
+7. FORMATTING: Return ONLY the valid Cypher query, no conversational explanations, and no markdown fences.
 
 EXAMPLES:
 Question: "list all the male voters"
 Cypher: MATCH (v:Voter) WHERE toLower(v.gender) = 'male' RETURN v
 
-Question: "show me open complaints"
-Cypher: MATCH (c:Complaint) WHERE toLower(c.status) = 'open' RETURN c
+Question: "list all the voters above the age of 50"
+Cypher: MATCH (v:Voter) WHERE v.age > 50 RETURN v
+
+Question: "show me open complaints about water"
+Cypher: MATCH (v:Voter)-[:REPORTED]->(c:Complaint) WHERE toLower(c.status) = 'open' AND toLower(c.issue_type) CONTAINS 'water' RETURN v, c
 
 QUESTION: {question}
 

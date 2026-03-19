@@ -105,3 +105,4 @@ class Neo4jClient:
 
 
 neo4j_client = Neo4jClient()
+__all__ = ["neo4j_client"]

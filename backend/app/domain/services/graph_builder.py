@@ -36,6 +36,8 @@ def process_complaints(df):
             c.status = $status
 
         MERGE (v)-[:REPORTED]->(c)
+        MERGE (i:Issue {name: $issue_type})
+        MERGE (c)-[:BELONGS_TO]->(i)
         """
 
         result = neo4j_client.run_query(query, {
@@ -48,4 +50,14 @@ def process_complaints(df):
 
         count += 1
     update_booth_metrics()
+
+    # Trigger Intelligence Layer
+    from app.domain.services.risk_engine import update_risk_scores
+    from app.domain.services.recommendation_engine import generate_recommendations
+    from app.domain.services.voter_segmentation import categorize_voters
+
+    update_risk_scores()
+    generate_recommendations()
+    categorize_voters()
+
     return {"complaints_processed": count}

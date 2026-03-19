@@ -1,21 +1,6 @@
 complaint_id,voter_id,issue_type,timestamp,status
-101,1,Water,2026-02-01,Open
-102,1,Drainage,2026-02-02,Resolved
-103,1,Electricity,2026-02-03,Open
-104,2,Road,2026-02-04,Open
-105,2,Water,2026-02-05,Resolved
-106,2,Sanitation,2026-02-06,Open
-107,3,Water,2026-02-07,Open
-108,3,Road,2026-02-08,Resolved
-109,3,Electricity,2026-02-09,Open
-110,3,Drainage,2026-02-10,Resolved
-111,1,Water,2026-02-11,Open
-112,2,Water,2026-02-12,Open
-113,3,Sanitation,2026-02-13,Open
-114,1,Road,2026-02-14,Resolved
-115,2,Electricity,2026-02-15,Resolved
-116,3,Water,2026-02-16,Open
-117,1,Drainage,2026-02-17,Open
-118,2,Road,2026-02-18,Open
-119,3,Electricity,2026-02-19,Resolved
-120,1,Sanitation,2026-02-20,Open
+1001,3,Water Supply,2023-11-01T10:00:00,Open
+1002,7,Road Repair,2023-11-02T14:30:00,Resolved
+1003,11,Street Light,2023-11-03T09:15:00,Open
+1004,15,Garbage Collection,2023-11-04T16:45:00,Open
+1005,18,Power Cut,2023-11-05T11:20:00,Resolved

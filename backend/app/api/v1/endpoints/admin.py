@@ -50,3 +50,39 @@ def get_admin_overview():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch overview: {str(e)}")
+
+
+@router.get("/booths")
+def get_booths():
+    query = """
+    MATCH (b:Booth)
+    RETURN 
+        b.booth_id AS booth_id,
+        coalesce(b.complaint_count, 0) AS complaint_count,
+        coalesce(b.open_count, 0) AS open_count,
+        coalesce(b.resolved_count, 0) AS resolved_count,
+        coalesce(b.risk_level, "Low") AS risk_level,
+        coalesce(b.recommendation, "No action required") AS recommendation
+    ORDER BY b.booth_id
+    """
+    return neo4j_client.run_query(query)
+
+
+@router.get("/recommendations")
+def get_recommendations():
+    query = """
+    MATCH (b:Booth)
+    WHERE b.recommendation IS NOT NULL AND b.recommendation <> "No action required"
+    RETURN
+        b.booth_id AS booth_id,
+        b.recommendation AS recommendation,
+        coalesce(b.risk_level, "Low") AS risk_level
+    ORDER BY b.booth_id
+    """
+    return neo4j_client.run_query(query)
+
+
+@router.get("/messages")
+def get_messages():
+    from app.domain.services.message_generator import generate_booth_messages
+    return generate_booth_messages()

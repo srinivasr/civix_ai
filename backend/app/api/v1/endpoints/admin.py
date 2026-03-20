@@ -51,7 +51,7 @@ def get_admin_overview():
             "total_complaints": total_complaints,
             "total_open_complaints": total_open,
             "total_resolved_complaints": total_resolved,
-            "avg_open_percentage": (round(avg_open_ratio, 2))*100,
+            "avg_open_ratio": round(avg_open_ratio, 2),
         }
 
     except Exception as e:

@@ -9,12 +9,13 @@ from app.api.v1.endpoints.admin import router as admin_router
 from app.api.v1.endpoints.ask import router as ask_router
 from app.domain.services.seed_graph import seed
 
+
 async def auto_update_csv():
     voters_file = Path("app/api/v1/uploads/voters.csv")
     last_mtime = 0
     if voters_file.exists():
         last_mtime = os.stat(voters_file).st_mtime
-    
+
     while True:
         await asyncio.sleep(2)
         if voters_file.exists():
@@ -27,6 +28,7 @@ async def auto_update_csv():
                     print("✅ Auto-update complete!")
                 except Exception as e:
                     print(f"❌ Auto-update failed: {e}")
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -48,6 +50,7 @@ app.add_middleware(
 app.include_router(upload_router, prefix="/api/v1/upload", tags=["Upload"])
 app.include_router(admin_router, prefix="/api/v1/admin", tags=["Admin"])
 app.include_router(ask_router, prefix="/api/v1", tags=["Ask"])
+
 
 @app.get("/")
 def health():

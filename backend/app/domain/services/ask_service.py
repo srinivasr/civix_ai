@@ -47,10 +47,8 @@ def ask_question(question: str) -> dict:
     # 5. Extract tabular data (dicts) and graph data (nodes/edges)
     data = [record.data() for record in raw_records]
 
-    # Re-run to get fresh records for graph extraction (records are consumed)
     try:
-        raw_records_for_graph = neo4j_client.run_read_query_raw(cypher)
-        graph = neo4j_client.extract_graph(raw_records_for_graph)
+        graph = neo4j_client.extract_graph(raw_records)
     except Exception:
         graph = {"nodes": [], "edges": []}
 

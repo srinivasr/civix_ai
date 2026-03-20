@@ -11,7 +11,7 @@ from app.domain.services.seed_graph import seed
 
 
 async def auto_update_csv():
-    voters_file = Path("app/api/v1/uploads/voters.csv")
+    voters_file = Path("data/uploads/voters.csv")
     last_mtime = 0
     if voters_file.exists():
         last_mtime = os.stat(voters_file).st_mtime

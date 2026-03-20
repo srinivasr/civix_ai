@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AskPanel from './AskPanel';
+import UploadPanel from './UploadPanel';
 
 const API_BASE = 'http://localhost:8000/api/v1/admin';
 
@@ -38,6 +39,7 @@ const Dashboard = () => {
   const navItems = [
     { id: 'overview', label: 'Overview', icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg> },
     { id: 'ask', label: 'Ask AI', icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
+    { id: 'upload', label: 'Upload', icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> },
   ];
 
   return (
@@ -65,7 +67,7 @@ const Dashboard = () => {
       {/* Main */}
       <div className="main">
         <header className="header">
-          <h1>{tab === 'ask' ? 'Ask AI' : 'Overview'}</h1>
+          <h1>{tab === 'ask' ? 'Ask AI' : tab === 'upload' ? 'Upload PDF' : 'Overview'}</h1>
           <div className="header-right">
             <button className="btn" onClick={fetchData}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{width:14,height:14}}><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
@@ -76,7 +78,9 @@ const Dashboard = () => {
         </header>
 
         <div className="content">
-          {tab === 'ask' ? (
+          {tab === 'upload' ? (
+            <UploadPanel />
+          ) : tab === 'ask' ? (
             <AskPanel />
           ) : loading ? (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '200px', gap: 8, color: 'var(--gray-500)' }}>

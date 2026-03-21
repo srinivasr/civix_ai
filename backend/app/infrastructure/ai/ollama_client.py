@@ -7,39 +7,45 @@ class OllamaClient:
 
     def __init__(self):
         self.base_url = settings.OLLAMA_URL
-        self.model = "llama3:latest"
+        self.model = "tomasonjo/llama3-text2cypher-demo:8b_4bit"
 
     def generate_cypher(self, schema: str, question: str) -> str:
         """Prompt the LLM with graph schema + user question → read-only Cypher."""
-        prompt = f"""You are a Neo4j Cypher expert. Given the graph database schema below,
-write a single READ-ONLY Cypher query to answer the user's question.
+        prompt = f"""You are an elite Neo4j Cypher expert. Given the Neo4j graph database schema below, your task is to write a single READ-ONLY Cypher query that accurately and safely answers the user's question.
 
-SCHEMA:
+### DATABASE SCHEMA ###
 {schema}
 
-RULES:
-1. SCHEMA STRICTNESS: Use ONLY labels, relationship types, and properties provided in the schema. Do NOT hallucinate or invent properties. Note that Voter has 'epic' not 'voter_id'.
-2. STRING MATCHING (CRITICAL): For string properties, NEVER use exact dictionary matches (e.g. {{gender: 'Male'}}). ALWAYS use a case-insensitive WHERE clause. For robustness, prefer CONTAINS for partial matching where appropriate: `WHERE toLower(v.name) CONTAINS 'sharma'`.
-3. NUMERICAL MATCHING: DO NOT use string functions (`toLower()`) or string quotes (`'50'`) for numerical properties (like `age`, `booth_id`). Compare them natively: `WHERE v.age > 50`.
-4. RETURN GRAPH ENTITIES: Always RETURN the actual nodes or relationships (e.g., `RETURN v, c`), NOT just their properties (e.g., avoid `RETURN v.name`). This is required for the application's graph visualization.
-5. READ-ONLY: NEVER use DELETE, CREATE, MERGE, SET, REMOVE, DROP, or DETACH. Only use MATCH, OPTIONAL MATCH, WITH, and RETURN.
-6. FALLBACK: If the question cannot be answered with the given schema, return exactly: MATCH (n) RETURN n LIMIT 0
-7. FORMATTING: Return ONLY the valid Cypher query, no conversational explanations, and no markdown fences.
-8. RELATIONSHIPS (CRITICAL): Do NOT invent relationships like `[:RELATION_NAME]`. `relation_name` and `relation_type` are string properties ON the `Voter` node (e.g. `v.relation_name`). Do not traverse them.
+### STRICT RULES FOR CYPHER GENERATION ###
+1. ONLY USE EXISTING ENTITIES: Use strictly the node labels, relationship types, and properties found in the schema above. NEVER hallucinate or invent new schema elements (e.g. use 'epic' for voters, not 'voter_id').
+2. CASE-INSENSITIVE STRING MATCHING: ALWAYS compare string properties gracefully by lowercasing them. Never use exact dictionaries like `{{gender: 'Male'}}`. ALWAYS use `WHERE toLower(v.name) CONTAINS 'sharma'` or `toLower(v.gender) = 'male'`.
+3. NUMERICAL COMPARISONS: Natively compare integers without string functions or quotes. Example: `WHERE v.age > 50`.
+4. NO DATA MUTATION (READ-ONLY): You are strictly forbidden from altering the graph. NEVER use CREATE, DELETE, SET, MERGE, REMOVE, DROP, or DETACH. Use only MATCH, WITH, OPTIONAL MATCH, and RETURN.
+5. GRAPH VISUALIZATION (RETURN ENTITIES): To render the UI graph correctly, ALWAYS explicitly RETURN the complete path or individual nodes and relationships. DO NOT return primitive properties like `RETURN v.name`. Example: Use `RETURN v, c` instead of `RETURN v.name, c.status`. If matching relationships, return them explicitly: `MATCH (v)-[r]->(b) RETURN v, r, b`.
+6. FAMILY RELATIONSHIPS ARE PROPERTIES: Do NOT confuse human "family relationships" with graph edges. If a user asks for "relationships of the voters" or "fathers", check the `relation_name` and `relation_type` properties on the `Voter` node directly. Do NOT write `MATCH (v)-[:FATHER]->(x)`. Use `MATCH (v:Voter) WHERE v.relation_type IS NOT NULL RETURN v`.
+7. DO NOT LIMIT RESULTS: NEVER use the `LIMIT` keyword in your query unless the user EXPLICITLY asks for a specific number of results (e.g., "top 5"). Always return the full dataset.
+8. FALLBACK RESPONSE: If the question cannot be answered with the given schema, output exactly: `MATCH (n) RETURN n LIMIT 0`.
+9. OUTPUT FORMATTING: Output ONLY the raw, executable Cypher query. No explanations, no markdown formatting, no code fences.
 
-EXAMPLES:
-Question: "list all the male voters"
+### EXAMPLES ###
+Question: "List all the male voters"
 Cypher: MATCH (v:Voter) WHERE toLower(v.gender) = 'male' RETURN v
 
-Question: "list all the voters above the age of 50"
+Question: "List all the voters above the age of 50"
 Cypher: MATCH (v:Voter) WHERE v.age > 50 RETURN v
 
-Question: "show me open complaints about water"
-Cypher: MATCH (v:Voter)-[:REPORTED]->(c:Complaint) WHERE toLower(c.status) = 'open' AND toLower(c.issue_type) CONTAINS 'water' RETURN v, c
+Question: "Show me open complaints about water"
+Cypher: MATCH (v:Voter)-[r:REPORTED]->(c:Complaint) WHERE toLower(c.status) = 'open' AND toLower(c.issue_type) CONTAINS 'water' RETURN v, r, c
 
-QUESTION: {question}
+Question: "Show me the family relationships of the voters"
+Cypher: MATCH (v:Voter) WHERE v.relation_type IS NOT NULL AND v.relation_name IS NOT NULL RETURN v
 
-CYPHER:"""
+Question: "Show all the relationships"
+Cypher: MATCH (n)-[r]->(m) RETURN n, r, m
+
+QUESTION: "{question}"
+
+CYPHER QUERY:"""
 
         response = requests.post(
             f"{self.base_url}/api/generate",

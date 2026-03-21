@@ -19,6 +19,11 @@ async def upload_csv(file: UploadFile = File(...), file_type: str = "voters"):
         contents = await file.read()
         df = pd.read_csv(io.BytesIO(contents))
 
+        # Save uploaded CSV to disk
+        UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+        csv_path = UPLOADS_DIR / f"{file_type}.csv"
+        df.to_csv(csv_path, index=False)
+
         if file_type == "voters":
             result = process_voters(df)
         elif file_type == "complaints":

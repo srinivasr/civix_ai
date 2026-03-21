@@ -60,7 +60,10 @@ const Dashboard = ({ tab, setTab }) => {
   }
 
   /* ── Overview Tab ── */
-  const resolutionRate = ((1 - (overview?.avg_open_ratio ?? 0)) * 100).toFixed(0);
+  const hasComplaints = overview?.total_complaints > 0;
+  const resolutionRate = hasComplaints 
+    ? ((1 - (overview.avg_open_ratio ?? 0)) * 100).toFixed(0) 
+    : '—';
 
   return (
     <div className="fade-in">
@@ -189,10 +192,10 @@ const Dashboard = ({ tab, setTab }) => {
               {/* Resolution Rate */}
               <div className="card">
                 <h3>Resolution Rate</h3>
-                <div className="rate-value">{resolutionRate}%</div>
+                <div className="rate-value">{resolutionRate}{hasComplaints ? '%' : ''}</div>
                 <div className="rate-label">complaints resolved</div>
                 <div className="progress-bar" style={{ marginTop: 14 }}>
-                  <div className="fill" style={{ width: `${resolutionRate}%` }} />
+                  <div className="fill" style={{ width: hasComplaints ? `${resolutionRate}%` : '0%' }} />
                 </div>
               </div>
 
@@ -214,7 +217,9 @@ const Dashboard = ({ tab, setTab }) => {
                   </div>
                   <div className="summary-row">
                     <span className="summary-label">Active recommendations</span>
-                    <span className="summary-value">{recommendations.length}</span>
+                    <span className="summary-value badge" style={{ background: 'var(--gray-100)', color: 'var(--gray-800)' }}>
+                      {recommendations.length}
+                    </span>
                   </div>
 
                 </div>

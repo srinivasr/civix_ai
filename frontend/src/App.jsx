@@ -4,17 +4,6 @@ import './index.css';
 
 const NAV_ITEMS = [
   {
-    id: 'about',
-    label: 'About',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="12" r="10" />
-        <line x1="12" y1="16" x2="12" y2="12" />
-        <line x1="12" y1="8" x2="12.01" y2="8" />
-      </svg>
-    ),
-  },
-  {
     id: 'upload',
     label: 'Upload',
     icon: (
@@ -60,6 +49,18 @@ const NAV_ITEMS = [
     ),
   },
 ];
+
+const ABOUT_ITEM = {
+  id: 'about',
+  label: 'About',
+  icon: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="16" x2="12" y2="12" />
+      <line x1="12" y1="8" x2="12.01" y2="8" />
+    </svg>
+  ),
+};
 
 const SETTINGS_ITEM = {
   id: 'settings',
@@ -120,15 +121,22 @@ function App() {
 
         {/* Bottom Actions */}
         <div className="sidebar-bottom">
-          <div
-            className={`nav-item ${tab === SETTINGS_ITEM.id ? 'active' : ''}`}
-            onClick={() => setTab(SETTINGS_ITEM.id)}
-            style={{ marginBottom: 24 }}
-          >
-            {SETTINGS_ITEM.icon}
-            <span>{SETTINGS_ITEM.label}</span>
+          <div className="sidebar-nav" style={{ marginBottom: 12 }}>
+            <div
+              className={`nav-item ${tab === ABOUT_ITEM.id ? 'active' : ''}`}
+              onClick={() => setTab(ABOUT_ITEM.id)}
+            >
+              {ABOUT_ITEM.icon}
+              <span>{ABOUT_ITEM.label}</span>
+            </div>
+            <div
+              className={`nav-item ${tab === SETTINGS_ITEM.id ? 'active' : ''}`}
+              onClick={() => setTab(SETTINGS_ITEM.id)}
+            >
+              {SETTINGS_ITEM.icon}
+              <span>{SETTINGS_ITEM.label}</span>
+            </div>
           </div>
-          
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 24px', background: 'var(--blue-700)', borderTop: '1px solid rgba(255,255,255,0.05)', margin: '0 -12px' }}>
             <div style={{ width: 8, height: 8, background: 'var(--amber-500)', borderRadius: 0 }} />
             <div style={{ display: 'flex', flexDirection: 'column' }}>

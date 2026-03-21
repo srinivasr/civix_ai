@@ -4,8 +4,7 @@ import UploadPanel from './UploadPanel';
 
 const API_BASE = 'http://localhost:8000/api/v1/admin';
 
-const Dashboard = () => {
-  const [tab, setTab] = useState('overview');
+const Dashboard = ({ tab, setTab }) => {
   const [overview, setOverview] = useState(null);
   const [booths, setBooths] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
@@ -15,9 +14,9 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const [o, b, r] = await Promise.all([
-        fetch(`${API_BASE}/overview`).then(r => r.json()),
-        fetch(`${API_BASE}/booths`).then(r => r.json()),
-        fetch(`${API_BASE}/recommendations`).then(r => r.json()),
+        fetch(`${API_BASE}/overview`).then(res => res.json()),
+        fetch(`${API_BASE}/booths`).then(res => res.json()),
+        fetch(`${API_BASE}/recommendations`).then(res => res.json()),
       ]);
       setOverview(o);
       setBooths(b);
@@ -36,141 +35,197 @@ const Dashboard = () => {
     return <span className={`badge ${cls}`}>{level}</span>;
   };
 
-  const navItems = [
-    { id: 'overview', label: 'Overview', icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg> },
-    { id: 'ask', label: 'Ask AI', icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
-    { id: 'upload', label: 'Upload', icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> },
-  ];
+  /* ── Upload Tab ── */
+  if (tab === 'upload') return <UploadPanel />;
 
-  return (
-    <div className="app">
-      {/* Sidebar */}
-      <aside className="sidebar">
-        <div className="sidebar-brand">
-          <div className="logo">C</div>
-          <span>Civix AI</span>
-        </div>
-        <nav className="sidebar-nav">
-          {navItems.map(item => (
-            <div
-              key={item.id}
-              className={`nav-item ${tab === item.id ? 'active' : ''}`}
-              onClick={() => setTab(item.id)}
-            >
-              {item.icon}
-              {item.label}
-            </div>
-          ))}
-        </nav>
-      </aside>
+  /* ── Ask AI Tab ── */
+  if (tab === 'ask') return <AskPanel />;
 
-      {/* Main */}
-      <div className="main">
-        <header className="header">
-          <h1>{tab === 'ask' ? 'Ask AI' : tab === 'upload' ? 'Upload PDF' : 'Overview'}</h1>
-          <div className="header-right">
-            <button className="btn" onClick={fetchData}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{width:14,height:14}}><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-              Refresh
-            </button>
-            <div className="avatar">A</div>
-          </div>
-        </header>
-
-        <div className="content">
-          {tab === 'upload' ? (
-            <UploadPanel />
-          ) : tab === 'ask' ? (
-            <AskPanel />
-          ) : loading ? (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '200px', gap: 8, color: 'var(--gray-500)' }}>
-              <div className="spinner" />
-              Loading...
-            </div>
-          ) : (
-            <>
-              {/* Stats */}
-              <div className="stats-grid">
-                {[
-                  { label: 'Total Booths', value: overview?.total_booths },
-                  { label: 'Total Complaints', value: overview?.total_complaints },
-                  { label: 'Open', value: overview?.total_open_complaints },
-                  { label: 'Resolved', value: overview?.total_resolved_complaints },
-                ].map((s, i) => (
-                  <div className="stat-card" key={i}>
-                    <div className="label">{s.label}</div>
-                    <div className="value">{s.value ?? '—'}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Grid */}
-              <div className="grid-2col">
-                {/* Table */}
-                <div className="card">
-                  <h3>Booth Risk Analysis</h3>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Booth</th>
-                        <th>Risk</th>
-                        <th>Complaints</th>
-                        <th>Open</th>
-                        <th>Resolved</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {booths.length === 0 ? (
-                        <tr><td colSpan="5" style={{ textAlign: 'center', color: 'var(--gray-400)', padding: 24 }}>No data</td></tr>
-                      ) : booths.map(b => (
-                        <tr key={b.booth_id}>
-                          <td style={{ fontWeight: 600, color: 'var(--gray-900)' }}>Booth {b.booth_id}</td>
-                          <td>{badge(b.risk_level)}</td>
-                          <td>{b.complaint_count}</td>
-                          <td>{b.open_count}</td>
-                          <td>{b.resolved_count}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Right column */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                  {/* Resolution rate */}
-                  <div className="card">
-                    <h3>Resolution Rate</h3>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                      <span style={{ fontSize: 28, fontWeight: 700, color: 'var(--gray-900)' }}>
-                        {((1 - (overview?.avg_open_ratio ?? 0)) * 100).toFixed(0)}%
-                      </span>
-                      <span style={{ fontSize: 13, color: 'var(--gray-500)' }}>complaints resolved</span>
-                    </div>
-                    <div className="progress-bar">
-                      <div className="fill" style={{ width: `${(1 - (overview?.avg_open_ratio ?? 0)) * 100}%` }} />
-                    </div>
-                  </div>
-
-                  {/* Recommendations */}
-                  <div className="card" style={{ flex: 1 }}>
-                    <h3>Recommendations</h3>
-                    {recommendations.length === 0 ? (
-                      <p style={{ color: 'var(--gray-400)', fontSize: 14 }}>All clear — no action needed.</p>
-                    ) : recommendations.map((r, i) => (
-                      <div className="rec-item" key={i}>
-                        <div className="rec-label">Booth {r.booth_id} · {badge(r.risk_level)}</div>
-                        <p>{r.recommendation}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
+  /* ── Settings Tab ── */
+  if (tab === 'settings') {
+    return (
+      <div className="fade-in">
+        <div className="card" style={{ maxWidth: 520 }}>
+          <h3>Settings</h3>
+          <p style={{ fontSize: 14, color: 'var(--gray-500)', lineHeight: 1.6 }}>
+            Configuration options will appear here in future updates.
+          </p>
         </div>
       </div>
+    );
+  }
+
+  /* ── Overview Tab ── */
+  const resolutionRate = ((1 - (overview?.avg_open_ratio ?? 0)) * 100).toFixed(0);
+
+  return (
+    <div className="fade-in">
+      {/* ── Stat Cards ── */}
+      <div className="stats-grid">
+        <StatCard
+          color="var(--blue-500)"
+          bgColor="var(--blue-50)"
+          label="Total Booths"
+          value={overview?.total_booths ?? '—'}
+          icon={
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue-500)" strokeWidth="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+          }
+        />
+        <StatCard
+          color="var(--amber-500)"
+          bgColor="var(--amber-50)"
+          label="Total Complaints"
+          value={overview?.total_complaints ?? '—'}
+          icon={
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--amber-500)" strokeWidth="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg>
+          }
+        />
+        <StatCard
+          color="var(--green-500)"
+          bgColor="var(--green-50)"
+          label="Resolved"
+          value={overview?.total_resolved_complaints ?? '—'}
+          icon={
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--green-500)" strokeWidth="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+          }
+        />
+        <StatCard
+          color="var(--red-500)"
+          bgColor="var(--red-50)"
+          label="Open"
+          value={overview?.total_open_complaints ?? '—'}
+          icon={
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--red-500)" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          }
+        />
+      </div>
+
+      {/* ── Loading ── */}
+      {loading ? (
+        <div className="loading-state">
+          <div className="spinner" />
+          Loading data...
+        </div>
+      ) : (
+        <div className="grid-2col">
+          {/* ── Booth Risk Table ── */}
+          <div className="card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+              <h3 style={{ margin: 0 }}>Booth Risk Analysis</h3>
+              <button className="btn" onClick={fetchData} style={{ fontSize: 12 }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 13, height: 13 }}>
+                  <polyline points="23 4 23 10 17 10" />
+                  <polyline points="1 20 1 14 7 14" />
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                </svg>
+                Refresh
+              </button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Booth</th>
+                  <th>Risk</th>
+                  <th>Complaints</th>
+                  <th>Open</th>
+                  <th>Resolved</th>
+                </tr>
+              </thead>
+              <tbody>
+                {booths.length === 0 ? (
+                  <tr>
+                    <td colSpan="5">
+                      <div className="empty-state" style={{ height: 120 }}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                          <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                          <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                          <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                          <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                        </svg>
+                        <p>No booth data yet</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  booths.map(b => (
+                    <tr key={b.booth_id}>
+                      <td style={{ fontWeight: 700, color: 'var(--gray-900)' }}>Booth {b.booth_id}</td>
+                      <td>{badge(b.risk_level)}</td>
+                      <td>{b.complaint_count}</td>
+                      <td>{b.open_count}</td>
+                      <td>{b.resolved_count}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* ── Right Column ── */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            {/* Resolution Rate */}
+            <div className="card">
+              <h3>Resolution Rate</h3>
+              <div className="rate-value">{resolutionRate}%</div>
+              <div className="rate-label">complaints resolved</div>
+              <div className="progress-bar" style={{ marginTop: 14 }}>
+                <div className="fill" style={{ width: `${resolutionRate}%` }} />
+              </div>
+            </div>
+
+            {/* Recommendations */}
+            <div className="card" style={{ flex: 1 }}>
+              <h3>Recommendations</h3>
+              {recommendations.length === 0 ? (
+                <p style={{ fontSize: 14, color: 'var(--gray-400)', fontWeight: 500 }}>
+                  All clear — no action needed.
+                </p>
+              ) : (
+                recommendations.map((r, i) => (
+                  <div className="rec-item" key={i}>
+                    <div className="rec-label">
+                      Booth {r.booth_id} · {badge(r.risk_level)}
+                    </div>
+                    <p>{r.recommendation}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
+/* ── Stat Card Helper ── */
+function StatCard({ label, value, icon, bgColor }) {
+  return (
+    <div className="stat-card">
+      <div className="stat-icon" style={{ background: bgColor }}>
+        {icon}
+      </div>
+      <div>
+        <p className="label">{label}</p>
+        <p className="value">{value}</p>
+      </div>
+    </div>
+  );
+}
 
 export default Dashboard;

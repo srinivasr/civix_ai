@@ -4,7 +4,7 @@ const PDF_API = 'http://localhost:8000/api/v1/upload/pdf';
 const CSV_API = 'http://localhost:8000/api/v1/upload';
 
 const UploadPanel = () => {
-  const [mode, setMode] = useState('voters');  // 'voters' or 'complaints'
+  const [mode, setMode] = useState('voters');   // 'voters' | 'complaints'
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -14,20 +14,17 @@ const UploadPanel = () => {
   const inputRef = useRef(null);
 
   const accept = mode === 'voters' ? '.pdf' : '.csv';
-  const mimeTypes = mode === 'voters' ? ['application/pdf'] : ['text/csv', 'application/vnd.ms-excel'];
+
+  const validateFile = (f) =>
+    mode === 'voters'
+      ? f.name.toLowerCase().endsWith('.pdf')
+      : f.name.toLowerCase().endsWith('.csv');
 
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === 'dragenter' || e.type === 'dragover') setDragActive(true);
     else if (e.type === 'dragleave') setDragActive(false);
-  };
-
-  const validateFile = (f) => {
-    if (mode === 'voters') {
-      return f.name.toLowerCase().endsWith('.pdf');
-    }
-    return f.name.toLowerCase().endsWith('.csv');
   };
 
   const handleDrop = (e) => {
@@ -71,12 +68,10 @@ const UploadPanel = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      let url;
-      if (mode === 'voters') {
-        url = PDF_API;
-      } else {
-        url = `${CSV_API}/?file_type=complaints`;
-      }
+      const url =
+        mode === 'voters'
+          ? PDF_API
+          : `${CSV_API}/?file_type=complaints`;
 
       const progressInterval = setInterval(() => {
         setProgress(prev => {
@@ -112,13 +107,14 @@ const UploadPanel = () => {
   };
 
   return (
-    <div>
+    <div className="fade-in">
+      {/* ── Header ── */}
       <div className="upload-header">
         <h2>Upload Data</h2>
         <p>Upload voter list PDFs or complaints CSV files to process into the database.</p>
       </div>
 
-      {/* Mode Toggle */}
+      {/* ── Mode Toggle ── */}
       <div className="upload-toggle">
         <button
           className={`toggle-btn ${mode === 'voters' ? 'active' : ''}`}
@@ -146,7 +142,7 @@ const UploadPanel = () => {
         </button>
       </div>
 
-      {/* Drop Zone */}
+      {/* ── Drop Zone ── */}
       <div
         className={`drop-zone ${dragActive ? 'active' : ''} ${file ? 'has-file' : ''}`}
         onDragEnter={handleDrag}
@@ -162,7 +158,7 @@ const UploadPanel = () => {
           onChange={handleFileSelect}
           style={{ display: 'none' }}
           id="file-input"
-          key={mode}  // reset input when mode changes
+          key={mode}
         />
 
         {file ? (
@@ -185,7 +181,8 @@ const UploadPanel = () => {
               title="Remove file"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </button>
           </div>
@@ -196,18 +193,28 @@ const UploadPanel = () => {
               <polyline points="17 8 12 3 7 8" />
               <line x1="12" y1="3" x2="12" y2="15" />
             </svg>
-            <p><strong>Drop your {mode === 'voters' ? 'PDF' : 'CSV'} here</strong> or click to browse</p>
-            <span>{mode === 'voters' ? 'Supports voter list PDF files' : 'CSV format: complaint_id, epic, issue_type, timestamp, status'}</span>
+            <p>
+              <strong>Drop your {mode === 'voters' ? 'PDF' : 'CSV'} here</strong> or click to browse
+            </p>
+            <span>
+              {mode === 'voters'
+                ? 'Supports voter list PDF files'
+                : 'CSV format: complaint_id, epic, issue_type, timestamp, status'}
+            </span>
           </div>
         )}
       </div>
 
-      {/* Progress */}
+      {/* ── Upload Progress ── */}
       {uploading && (
         <div className="upload-progress">
           <div className="progress-info">
             <div className="spinner" />
-            <span>{mode === 'voters' ? 'Processing PDF with OCR... This may take a few minutes.' : 'Processing complaints CSV...'}</span>
+            <span>
+              {mode === 'voters'
+                ? 'Processing PDF with OCR… This may take a few minutes.'
+                : 'Processing complaints CSV…'}
+            </span>
           </div>
           <div className="progress-bar">
             <div className="fill" style={{ width: `${progress}%` }} />
@@ -215,22 +222,26 @@ const UploadPanel = () => {
         </div>
       )}
 
-      {/* Upload Button */}
+      {/* ── Upload Button ── */}
       {file && !uploading && (
-        <button className="btn btn-primary upload-btn" onClick={handleUpload} id="upload-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{width:14,height:14}}>
+        <button
+          className="btn btn-primary upload-btn"
+          onClick={handleUpload}
+          id="upload-btn"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 15, height: 15 }}>
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="17 8 12 3 7 8" />
             <line x1="12" y1="3" x2="12" y2="15" />
           </svg>
-          Upload & Process
+          Upload &amp; Process
         </button>
       )}
 
-      {/* Error */}
+      {/* ── Error ── */}
       {error && <div className="error-msg">{error}</div>}
 
-      {/* Success */}
+      {/* ── Success ── */}
       {result && (
         <div className="upload-result">
           <div className="result-icon">
@@ -241,7 +252,10 @@ const UploadPanel = () => {
           </div>
           <div className="result-info">
             <h4>Upload Successful</h4>
-            <p>{result.message || `${mode === 'voters' ? 'Voters' : 'Complaints'} data processed successfully.`}</p>
+            <p>
+              {result.message ||
+                `${mode === 'voters' ? 'Voters' : 'Complaints'} data processed successfully.`}
+            </p>
             <div className="result-stats">
               {result.records_extracted != null && (
                 <div className="result-stat">

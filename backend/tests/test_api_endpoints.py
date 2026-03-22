@@ -30,9 +30,14 @@ def test_health_endpoint(mock_gdb, mock_seed):
 def test_admin_overview(mock_gdb, mock_seed, mock_client):
     """GET /api/v1/admin/overview should return booth/complaint stats."""
     mock_client.run_query.side_effect = [
-        [{"total_booths": 5}],
-        [{"total_complaints": 20}],
-        [{"total_open": 8, "total_resolved": 12}],
+        [
+            {
+                "total_booths": 5,
+                "total_complaints": 20,
+                "total_open": 8,
+                "total_resolved": 12,
+            }
+        ],
     ]
     from app.main import app
 

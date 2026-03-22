@@ -8,7 +8,7 @@ The presentation layer of **Civix AI**. Built with speed, reactivity, and a prem
 
 - **Framework**: React 19 + Vite
 - **Styling**: Vanilla CSS (Dark Theme + Glassmorphism)
-- **Graph Visualization**: `vis-network` & `vis-data`
+- **Graph Visualization**: `vis-network` & `vis-data` (Louvain Community clustering & PageRank)
 - **Tooling**: ESLint, Node.js
 
 ---
@@ -19,11 +19,16 @@ The presentation layer of **Civix AI**. Built with speed, reactivity, and a prem
 frontend/
  ├── public/             # Static Assets
  ├── src/
- │   ├── components/     # Reusable UI Blocks (Glassmorphic Panels, Ask Panel, Upload Panel)
- │   ├── pages/          # Main Views (Dashboard)
- │   ├── App.css         # Global Styles & Theming Variables
+ │   ├── components/     # Reusable UI Blocks
+ │   │   ├── Dashboard.jsx         # Main Metrics & Risk Overview
+ │   │   ├── AskPanel.jsx          # Chat UI for Natural Language Cypher Queries
+ │   │   ├── UploadPanel.jsx       # CSV & PDF File Dropzone with OCR status
+ │   │   ├── GraphAnalyticsPanel.jsx # Threat Intelligence Network mapping
+ │   │   └── AboutPanel.jsx        # System Architecture diagrams
  │   ├── App.jsx         # Main React Component & Routing
+ │   ├── index.css       # Global Styles, Glassmorphic Theming & Animations
  │   └── main.jsx        # React DOM Entry Point
+ ├── eslint.config.js    # Modern flat-config ESLint rules
  ├── package.json        # Dependencies and Scripts
  ├── vite.config.js      # Vite Configurations
  └── README.md           # Frontend Documentation
@@ -63,9 +68,10 @@ The frontend will be instantly accessible, normally at: `http://localhost:5173`
 ## 💠 Design Principles
 
 The UI of Civix AI is built around the concept of a **Living Dashboard**:
-- **Premium Aesthetics**: Deep, carefully curated custom dark palettes combined with vibrant, purposeful accent colors.
-- **Glassmorphism Integration**: Floating panels and transparent blurs that bring the interactive Knowledge Graph to the forefront.
-- **Dynamic Interaction**: Utilizes `vis-network` to allow users to physically drag, zoom, and explore connections within the civic dataset.
+- **Premium Aesthetics**: Deep, carefully curated custom dark palettes combined with vibrant, purposeful accent colors (e.g., Amber for high-risk zones, Blue for active connections).
+- **Glassmorphism Integration**: Floating panels and transparent CSS blurs that bring the interactive Knowledge Graph to the forefront without clutter.
+- **Dynamic Interaction**: Utilizes `vis-network` to allow users to physically drag, zoom, and explore node connections within the civic dataset.
+- **Real-Time Responsiveness**: Stat cards dynamically calculate progress bars, Resolution Rates, and Active Action-Items fetched directly from the Neo4j backend.
 
 ---
 
@@ -74,4 +80,4 @@ The UI of Civix AI is built around the concept of a **Living Dashboard**:
 - `npm run dev`: Starts the development server.
 - `npm run build`: Bundles the application for production.
 - `npm run preview`: Locally previews the production build.
-- `npm run lint`: Runs ESLint to verify code quality.
+- `npx eslint src/`: Runs the linter to verify code quality.

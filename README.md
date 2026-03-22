@@ -25,9 +25,9 @@ Moving beyond traditional reactive complaint management, Civix AI empowers decis
 
 - 🎯 **Booth-level Risk Prediction**: Anticipate issues before they escalate.
 - 🕸️ **Structural Community Detection**: Understand hidden relationships within civic data.
-- 🔢 **Civic Score Computation**: Evaluate community health using dynamically calculated scores.
+- 🔢 **Civic Score Computation**: Evaluate community health using dynamically calculated scores based on accurate, real-time node metrics.
 - 🤖 **AI-Based Recommendations**: Receive actionable, localized deployment strategies.
-- 📊 **Decision-Support Dashboard**: A modern, glassmorphic UI for real-time visualization.
+- 📊 **Decision-Support Dashboard**: A modern, glassmorphic UI for real-time visualization and natural-language "Ask AI" queries.
 
 ---
 
@@ -37,7 +37,7 @@ The platform is designed to process, enrich, and visualize raw data at scale.
 
 ```mermaid
 graph TD
-    A[Raw Tabular Data] -->|Data Cleaning & Validation| B(Knowledge Graph - Neo4j)
+    A[Raw Tabular Data / PDFs] -->|OCR / Data Cleaning & Validation| B(Knowledge Graph - Neo4j)
     B -->|Graph Enrichment| C{Graph Algorithms}
     C -->|Louvain, PageRank| D[Risk Prediction System]
     D -->|Ollama LLM Output| E[AI Recommendations]
@@ -48,7 +48,7 @@ graph TD
 
 ## 🔬 AI & Data Pipeline
 
-Our intelligence engine is powered by three main pillars:
+Our intelligence engine is powered by four main pillars:
 
 ### 1. Graph Intelligence (Neo4j)
 - **Louvain Clustering**: Identifies structural community groups based on interaction data.
@@ -59,12 +59,14 @@ Our intelligence engine is powered by three main pillars:
 - Evaluates booth-level risk scores based on complaint growth rates, resolution delays, and localized sentiment.
 - Dynamically assigns risk categories (e.g., Low, Medium, High).
 
-### 3. NLP & Recommendations (Ollama)
-- Analyzes complaint sentiment and extracts core topics from unstructured text.
-- Provides actionable, natural-language insights directly to the dashboard (e.g., *"Booth 23 shows high risk of water infrastructure failure. Deploy inspection team immediately."*).
+### 3. NLP & Secure Cypher Generation (Ollama)
+- Translates natural language questions into highly-optimized, **strictly read-only** Neo4j Cypher queries. 
+- Employs self-correcting logic to enforce case-insensitive graph traversals, prevents mutating queries (DELETE/CREATE), and summarizes output into conversational answers.
+- Provides actionable, natural-language insights directly to the dashboard (e.g., *"Deploy inspection team immediately."*).
 
 ### 4. Automated Data Ingestion (OCR)
-- Processes raw PDF voter lists into structured data using Optical Character Recognition (Tesseract) and layout detection (OpenCV).
+- Processes raw Voter PDF lists into structured Neo4j nodes using Optical Character Recognition (Tesseract) and high-speed multi-threaded bounding-box extraction.
+- Continuously watches for data file updates to automatically re-seed the graph.
 
 ---
 
@@ -74,16 +76,16 @@ This is a monorepo containing both the FastAPI graphical backend and the React f
 
 ```text
 civix_ai/
- ├── backend/            # FastAPI, Neo4j connection, LLM integration
+ ├── backend/            # FastAPI, Neo4j connection, LLM integration, OCR pipeline
  │   ├── app/            # Main application logic & endpoints
- │   ├── data/           # Upoaded CSVs and pipeline data
+ │   ├── data/           # Uploaded CSVs and pipeline data
  │   ├── scripts/        # Database seeding & utility scripts
- │   ├── tests/          # Pytest backend suites
+ │   ├── tests/          # Robust backend test suite (pytest)
  │   ├── requirements.txt
  │   └── README.md       # Backend-specific instructions
  │
  ├── frontend/           # React + Vite application
- │   ├── src/            # Components, pages, charts & network graphs
+ │   ├── src/            # Components, pages, charts & interactive network graphs
  │   ├── package.json
  │   └── README.md       # Frontend-specific instructions
  │
@@ -97,7 +99,7 @@ civix_ai/
 You can run the full application by spinning up both the backend and frontend servers independently.
 
 ### Step 1: Backend Setup
-Make sure you have a running instance of Neo4j and Ollama.
+Make sure you have a running instance of Neo4j, Ollama, and system OCR dependencies.
 
 ```bash
 cd backend
@@ -108,7 +110,7 @@ pip install -r requirements.txt
 # Run the API server
 uvicorn app.main:app --reload
 ```
-*For detailed environment setup, see the [Backend README](./backend/README.md).*
+*For detailed environment setup and OCR requirements, see the [Backend README](./backend/README.md).*
 
 ### Step 2: Frontend Setup
 
@@ -128,10 +130,10 @@ npm run dev
 Civix AI strictly enforces data privacy and ethical AI usage:
 
 - 🛡️ **No Personal Profiling**: Data is anonymized and strictly aggregated at the booth or ward level.
-- 🛡️ **No Political Targeting**: The LLM prompts and Cypher generation are strictly scoped to prevent biased queries.
+- 🛡️ **No Mutating AI Queries**: The LLM prompt injection barriers are tightly scoped to completely block any commands that attempt to alter or destroy graph data.
 - 🛡️ **Role-Based Access**: Designed for authorized civic administrators and planners.
 
 ---
 
 ## 🏆 Built For
-Designed to set a new standard in **AI in Governance**. A hackathon-ready, highly scalable architecture tailored for Smart Cities, Decision Support Systems, and Civic Intelligence.
+Designed to set a new standard in **AI in Governance**. A highly scalable architecture tailored for Smart Cities, Decision Support Systems, and Civic Intelligence.

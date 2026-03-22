@@ -35,27 +35,27 @@ from PIL import Image
 
 # ── Pre-compiled patterns (module-level — compiled once, reused everywhere) ───
 
-_RE_NAME        = re.compile(r"(?:name|नाम)\s*[:\-]?\s*(.+)",    re.IGNORECASE)
-_RE_RELATION    = re.compile(
-    r"(father|husband|mother|others|guardian|पिता|पति|माता)",     re.IGNORECASE
+_RE_NAME = re.compile(r"(?:name|नाम)\s*[:\-]?\s*(.+)", re.IGNORECASE)
+_RE_RELATION = re.compile(
+    r"(father|husband|mother|others|guardian|पिता|पति|माता)", re.IGNORECASE
 )
-_RE_REL_VALUE   = re.compile(r":\s*(.+)")
-_RE_AGE         = re.compile(r"(?:age|आयु)\s*[:\-]?\s*(\d+)",    re.IGNORECASE)
-_RE_FEMALE      = re.compile(r"(?:female|महिला)",                  re.IGNORECASE)
-_RE_MALE        = re.compile(r"(?:male|पुरुष)",                    re.IGNORECASE)
-_RE_EPIC        = re.compile(r"[A-Z]{3}\s*\d{6,8}")
-_RE_EPIC_VALID  = re.compile(r"^[A-Z]{3}\d{7}$")
-_RE_HOUSE       = re.compile(r"(?:house|मकान)",                    re.IGNORECASE)
-_RE_HOUSE_NUM   = re.compile(r"\b\d+\b")
-_RE_ASSEMBLY    = re.compile(r"Assembly.*?:\s*(.+)",               re.IGNORECASE)
-_RE_SECTION     = re.compile(r"Section.*?:\s*(.+)",                re.IGNORECASE)
-_RE_PART        = re.compile(r"Part\s*No\.?\s*[:\-]?\s*(\d+)",    re.IGNORECASE)
+_RE_REL_VALUE = re.compile(r":\s*(.+)")
+_RE_AGE = re.compile(r"(?:age|आयु)\s*[:\-]?\s*(\d+)", re.IGNORECASE)
+_RE_FEMALE = re.compile(r"(?:female|महिला)", re.IGNORECASE)
+_RE_MALE = re.compile(r"(?:male|पुरुष)", re.IGNORECASE)
+_RE_EPIC = re.compile(r"[A-Z]{3}\s*\d{6,8}")
+_RE_EPIC_VALID = re.compile(r"^[A-Z]{3}\d{7}$")
+_RE_HOUSE = re.compile(r"(?:house|मकान)", re.IGNORECASE)
+_RE_HOUSE_NUM = re.compile(r"\b\d+\b")
+_RE_ASSEMBLY = re.compile(r"Assembly.*?:\s*(.+)", re.IGNORECASE)
+_RE_SECTION = re.compile(r"Section.*?:\s*(.+)", re.IGNORECASE)
+_RE_PART = re.compile(r"Part\s*No\.?\s*[:\-]?\s*(\d+)", re.IGNORECASE)
 _RE_NAME_PREFIX = re.compile(r"^(.{1,3}\s*[:\-]\s*)")
-_RE_NAME_LEAD   = re.compile(r"^[^a-zA-Z\u0900-\u097F]+")
-_RE_NAME_CHARS  = re.compile(r"[^a-zA-Z\u0900-\u097F\s\.]")
-_RE_CAMEL       = re.compile(r"([a-z])([A-Z])")
+_RE_NAME_LEAD = re.compile(r"^[^a-zA-Z\u0900-\u097F]+")
+_RE_NAME_CHARS = re.compile(r"[^a-zA-Z\u0900-\u097F\s\.]")
+_RE_CAMEL = re.compile(r"([a-z])([A-Z])")
 _RE_SPACED_CAPS = re.compile(r"^([A-Z]\s+){3,}")
-_RE_WHITESPACE  = re.compile(r"\s+")
+_RE_WHITESPACE = re.compile(r"\s+")
 
 _RELATION_MAP = {
     "father": "Father", "पिता": "Father",
@@ -64,9 +64,10 @@ _RELATION_MAP = {
     "others": "Others",
 }
 
-_DNE = "DNE"   # sentinel — "Does Not Exist / not found"
+_DNE = "UNKNOWN"   # sentinel — "Does Not Exist / not found"
 
 # ── Image helpers ─────────────────────────────────────────────────────────────
+
 
 def _to_bgr(pil_image) -> np.ndarray:
     """Convert a PIL image to a BGR ndarray once; callers reuse the result."""
@@ -89,11 +90,13 @@ def _preprocess(bgr: np.ndarray) -> np.ndarray:
 
 # ── PDF loading ───────────────────────────────────────────────────────────────
 
+
 def pdf_to_images(pdf_path: str) -> list:
     """Convert PDF to PIL images, skipping first 2 cover pages."""
     return convert_from_path(pdf_path, first_page=3, thread_count=4)
 
 # ── Box detection ─────────────────────────────────────────────────────────────
+
 
 def detect_boxes(bgr: np.ndarray) -> list[np.ndarray]:
     """
@@ -116,6 +119,7 @@ def detect_boxes(bgr: np.ndarray) -> list[np.ndarray]:
 
 # ── OCR ───────────────────────────────────────────────────────────────────────
 
+
 def ocr_box(preprocessed: np.ndarray) -> str:
     """Run Tesseract on an already-preprocessed (binarised grayscale) ndarray."""
     return pytesseract.image_to_string(
@@ -135,6 +139,7 @@ def extract_header_text(bgr: np.ndarray) -> str:
 
 # ── Parsing ───────────────────────────────────────────────────────────────────
 
+
 def parse_header(text: str) -> dict:
     """Extract assembly, section, part_no from page-header OCR text."""
     def _get(pattern: re.Pattern, fallback: str = _DNE) -> str:
@@ -143,8 +148,8 @@ def parse_header(text: str) -> dict:
 
     return {
         "assembly": _get(_RE_ASSEMBLY),
-        "section":  _get(_RE_SECTION),
-        "part_no":  _get(_RE_PART),
+        "section": _get(_RE_SECTION),
+        "part_no": _get(_RE_PART),
     }
 
 
@@ -166,8 +171,8 @@ def extract_fields(text: str) -> dict:
         "house_no", "age", "gender",
     )}
 
-    lines = [l.strip() for l in text.splitlines() if l.strip()]
-    full  = " ".join(lines)
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    full = " ".join(lines)
 
     # NAME
     for line in lines:
@@ -232,6 +237,7 @@ def clean_record(data: dict) -> dict:
 
 # ── Per-box worker ────────────────────────────────────────────────────────────
 
+
 def process_single_box(box_bgr: np.ndarray, header_data: dict) -> dict | None:
     """
     Full processing for one voter card box.
@@ -253,6 +259,7 @@ def process_single_box(box_bgr: np.ndarray, header_data: dict) -> dict | None:
     return record
 
 # ── Main pipeline ─────────────────────────────────────────────────────────────
+
 
 def process_pdf(pdf_path: str) -> pd.DataFrame:
     """Full pipeline: PDF path → structured DataFrame.
@@ -281,7 +288,7 @@ def process_pdf(pdf_path: str) -> pd.DataFrame:
             # Re-parse header only when the OCR text actually differs from the last page
             header_text = extract_header_text(bgr)
             if header_text != prev_header_text:
-                cached_header    = parse_header(header_text)
+                cached_header = parse_header(header_text)
                 prev_header_text = header_text
 
             boxes = detect_boxes(bgr)

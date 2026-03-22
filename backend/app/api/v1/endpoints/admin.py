@@ -7,40 +7,22 @@ router = APIRouter()
 @router.get("/overview")
 def get_admin_overview():
     try:
-        # Total booths
-        total_booths_query = """
-        MATCH (b:Booth)
-        RETURN count(b) AS total_booths
-        """
-        total_booths_result = neo4j_client.run_query(total_booths_query)
-        total_booths = (
-            total_booths_result[0]["total_booths"] if total_booths_result else 0
-        )
-
-        # Total complaints
-        total_complaints_query = """
-        MATCH (c:Complaint)
-        RETURN count(c) AS total_complaints
-        """
-        total_complaints_result = neo4j_client.run_query(total_complaints_query)
-        total_complaints = (
-            total_complaints_result[0]["total_complaints"]
-            if total_complaints_result
-            else 0
-        )
-
-        # Aggregate booth metrics
-        metrics_query = """
+        # Aggregate all stats from booth metrics for consistency
+        overview_query = """
         MATCH (b:Booth)
         RETURN
-            sum(b.open_count) AS total_open,
-            sum(b.resolved_count) AS total_resolved
+            count(b) AS total_booths,
+            sum(coalesce(b.complaint_count, 0)) AS total_complaints,
+            sum(coalesce(b.open_count, 0)) AS total_open,
+            sum(coalesce(b.resolved_count, 0)) AS total_resolved
         """
-        metrics_result = neo4j_client.run_query(metrics_query)
-        metrics = metrics_result[0] if metrics_result else {}
+        result = neo4j_client.run_query(overview_query)
+        row = result[0] if result else {}
 
-        total_open = metrics.get("total_open") or 0
-        total_resolved = metrics.get("total_resolved") or 0
+        total_booths = row.get("total_booths") or 0
+        total_complaints = row.get("total_complaints") or 0
+        total_open = row.get("total_open") or 0
+        total_resolved = row.get("total_resolved") or 0
 
         avg_open_ratio = 0
         if total_complaints > 0:

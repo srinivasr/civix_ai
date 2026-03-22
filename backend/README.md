@@ -1,6 +1,6 @@
 # ⚙️ Civix AI - Backend
 
-The robust Python-based backend for **Civix AI**. It connects to a **Neo4j Knowledge Graph**, exposes RESTful APIs using **FastAPI**, and seamlessly integrates with **Ollama** for natural language Cypher generation and AI insights.
+The robust Python-based backend for **Civix AI**. It connects to a **Neo4j Knowledge Graph**, exposes RESTful APIs using **FastAPI**, processes PDF voter lists via highly-optimised **OCR pipelines**, and effortlessly translates natural language into secure Cypher queries using **Ollama**.
 
 ---
 
@@ -8,8 +8,9 @@ The robust Python-based backend for **Civix AI**. It connects to a **Neo4j Knowl
 
 - **Framework**: FastAPI (Asynchronous, fast, and highly performant)
 - **Database**: Neo4j (Graph Database for profound relationship tracking)
-- **NLP/LLM**: Ollama (Locally hosted LLM for secure, private analysis)
-- **Data Processing**: Pandas, Numpy, OpenCV, Tesseract OCR
+- **NLP/LLM**: Ollama (Locally hosted `llama3-text2cypher-demo`, 8b 4bit models supported)
+- **Data Extractor**: OpenCV, Tesseract OCR, pdf2image (for multi-threaded PDF ingest)
+- **Testing**: Pytest
 
 ---
 
@@ -18,14 +19,14 @@ The robust Python-based backend for **Civix AI**. It connects to a **Neo4j Knowl
 ```text
 backend/
  ├── app/
- │   ├── api/             # FastAPI Route Handlers (Endpoints)
- │   ├── core/            # Configuration, Security, Middlewares
- │   ├── domain/          # Pydantic Models & Business/OCR Services
- │   ├── infrastructure/  # Neo4j Driver Connection & LLM Integration
- │   └── main.py          # Application Entry Point
- ├── data/                # Uploaded datasets (voters, complaints)
- ├── scripts/             # Utility scripts (reset_db.py, count_all.py, etc.)
- ├── tests/               # Backend testing files
+ │   ├── api/             # FastAPI Route Handlers (Admin, Ask, Upload)
+ │   ├── core/            # Configuration & Settings
+ │   ├── domain/          # Business Logic, OCR Services (pdf_converter), Graph Encoders
+ │   ├── infrastructure/  # Neo4j Driver Connection & LLM Output Parsers
+ │   └── main.py          # Application Entry Point & Auto-Sync Watcher
+ ├── data/                # Uploaded datasets (voters.csv, complaints.csv)
+ ├── scripts/             # Utility scripts
+ ├── tests/               # Backend Pytest suite (coverage for endpoints and safe LLM gen)
  ├── .env                 # Environment variables (Neo4j URI, Passwords)
  ├── requirements.txt     # Python dependencies
  └── README.md            # Backend Documentation
@@ -38,7 +39,7 @@ backend/
 ### 1. Prerequisites
 - **Python 3.9+**
 - **Neo4j Database**: You can use Neo4j Desktop, Neo4j Aura (Cloud), or a local Docker instance.
-- **Ollama**: Install [Ollama](https://ollama.ai/) and pull your required model (e.g., `ollama run llama3`).
+- **Ollama**: Install [Ollama](https://ollama.ai/) and pull your required model (e.g., `ollama run tomasonjo/llama3-text2cypher-demo:8b_4bit` or `llama3`).
 - **OCR System Dependencies**:  
   You must install Tesseract and Poppler on your host system to process PDF uploads natively:
   ```bash
@@ -64,7 +65,7 @@ Create a `.env` file in the `backend/` directory with the following variables:
 
 ```env
 NEO4J_URI=bolt://localhost:7687
-NEO4J_USER=neo4j
+NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=your_password
 OLLAMA_URL=http://localhost:11434
 ```
@@ -80,10 +81,14 @@ uvicorn app.main:app --reload
 The API will be accessible at: `http://localhost:8000`  
 Swagger UI Documentation: `http://localhost:8000/docs`
 
+Note: The backend application contains an auto-update watcher that will instantly re-seed the graph database whenever changes to `data/uploads/voters.csv` or complaints are detected.
+
 ---
 
 ## 🧩 Key Functionalities
 
-- **Graph Retrieval**: Executes complex Cypher queries against the Neo4j database to fetch booth-level insights and structural community data.
-- **LLM Context Generation**: Processes natural language questions from the frontend, securely translates them into Neo4j Cypher queries using strict schemas, and formats the output into readable AI suggestions.
-- **Safety Middleware**: Implements prompt-safety boundaries to refuse queries that attempt to access personally identifiable information or violate ethical guidelines.
+- **Automated Data Ingestion**: Endpoints securely receive heavy PDF voter manifests, converting them to tabular CSV data using multi-threaded image preprocessing and dual-language OCR engines, automatically seeding the graph database.
+- **Live Graph Analytics**: Executes complex calculations against Neo4j to continuously update Booth Risk metrics and automatically resolve discrepancy matrices in complaint resolution statuses.
+- **LLM Cypher Generation**: Evaluates natural language dynamically by polling current Neo4j schema states, returning execution plans to Ollama to generate strictly read-only Cypher queries. 
+- **Safety Middleware**: Hard-blocks mutating outputs (CREATE, DELETE, DETACH) natively via regex filters and XML-bounded extraction mechanics before touching the Neo4j API.
+- **Unit Testing**: Contains a robust `pytest` suite simulating Edge-Cases and ensuring the integrity of the predictive Booth Logic calculation engines.

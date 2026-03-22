@@ -56,16 +56,16 @@ const LodgeComplaintPanel = () => {
   };
 
   return (
-    <div className="fade-in" style={{ padding: '0 0 40px 0', maxWidth: '960px', margin: '0 auto' }}>
+    <div className="fade-in" style={{ padding: '0', width: '100%', margin: '0', minHeight: '100vh', backgroundColor: 'var(--white)' }}>
       {/* ── Institutional Header Block ── */}
       <div style={{ 
         background: 'var(--blue-600)', 
-        padding: '32px 40px', 
-        borderBottom: '4px solid var(--amber-500)',
+        padding: '48px 60px', 
+        borderBottom: '6px solid var(--amber-500)',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'flex-end',
-        marginBottom: '24px'
+        marginBottom: '0'
       }}>
         <div>
           <h2 style={{ 
@@ -95,9 +95,9 @@ const LodgeComplaintPanel = () => {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', minHeight: 'calc(100vh - 150px)' }}>
         {/* ── Main Dossier Form ── */}
-        <div style={{ background: 'var(--white)', border: '1px solid var(--gray-200)', borderRadius: '0' }}>
+        <div style={{ background: 'var(--white)', borderRight: '1px solid var(--gray-200)', borderRadius: '0' }}>
           {message && (
             <div style={{
               padding: '16px 24px',
@@ -112,7 +112,7 @@ const LodgeComplaintPanel = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} style={{ padding: '40px' }}>
+          <form onSubmit={handleSubmit} style={{ padding: '60px 80px' }}>
             <div style={{ marginBottom: '32px', borderBottom: '1px solid var(--gray-100)', paddingBottom: '12px' }}>
               <h3 style={{ fontSize: '12px', fontWeight: '900', color: 'var(--gray-900)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                 Recipient Identification
@@ -244,8 +244,8 @@ const LodgeComplaintPanel = () => {
         </div>
 
         {/* ── Sidebar Metadata ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <div style={{ background: 'var(--blue-50)', border: '1px solid var(--blue-100)', padding: '24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0', background: 'var(--gray-50)', borderLeft: '1px solid var(--gray-200)' }}>
+          <div style={{ background: 'var(--blue-50)', padding: '40px', borderBottom: '1px solid var(--blue-100)' }}>
             <h4 style={{ fontSize: '10px', fontWeight: '900', color: 'var(--blue-600)', letterSpacing: '0.1em', marginBottom: '16px', textTransform: 'uppercase' }}>
               Submission Context
             </h4>

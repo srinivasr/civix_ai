@@ -74,3 +74,8 @@ coverage.xml
 *.swp
 *.tmp
 *.bak
+
+# =========================
+# Data Uploads
+# =========================
+backend/data/uploads/*.csv

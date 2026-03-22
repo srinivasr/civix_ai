@@ -78,10 +78,16 @@ async def upload_pdf(files: List[UploadFile] = File(...)):
         csv_path = UPLOADS_DIR / "voters.csv"
         
         if csv_path.exists():
-            existing_df = pd.read_csv(csv_path)
-            final_df = pd.concat([existing_df, combined_df], ignore_index=True)
-            # Optional deduplication to prevent double entries if re-uploaded
-            final_df = final_df.drop_duplicates(subset=["epic"], keep="last")
+            try:
+                existing_df = pd.read_csv(csv_path)
+                if not existing_df.empty:
+                    final_df = pd.concat([existing_df, combined_df], ignore_index=True)
+                    if "epic" in final_df.columns:
+                        final_df = final_df.drop_duplicates(subset=["epic"], keep="last")
+                else:
+                    final_df = combined_df
+            except pd.errors.EmptyDataError:
+                final_df = combined_df
         else:
             final_df = combined_df
             

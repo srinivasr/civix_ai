@@ -50,6 +50,18 @@ const NAV_ITEMS = [
       </svg>
     ),
   },
+  {
+    id: 'drives',
+    label: 'Drives',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+  },
 ];
 
 const ABOUT_ITEM = {
@@ -80,6 +92,7 @@ const PAGE_TITLES = {
   intelligence: 'Threat Intelligence Network',
   ask: 'Ask AI',
   upload: 'Upload Data',
+  drives: 'Drive Management',
   about: 'About System',
   settings: 'Settings',
   lodge_complaint: 'Voter Complaint Portal',
@@ -89,18 +102,20 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [tab, setTab] = useState('overview');
   const [userRole, setUserRole] = useState('official'); // 'official' or 'voter'
+  const [boothId, setBoothId] = useState(null);
   const [expanded] = useState(true);
 
-  const handleLogin = (type) => {
+  const handleLogin = (type, bId) => {
     setIsLoggedIn(true);
-    // Map 'booth' to 'voter' role for internal logic, 'official' remains 'official'
     setUserRole(type === 'booth' ? 'voter' : 'official');
+    setBoothId(bId);
     setTab('overview');
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setTab('overview');
+    setBoothId(null);
   };
 
   if (!isLoggedIn) {
@@ -230,7 +245,7 @@ function App() {
           {userRole === 'official' ? (
             <Dashboard tab={tab} setTab={setTab} />
           ) : (
-            <LodgeComplaintPanel />
+            <LodgeComplaintPanel boothId={boothId} />
           )}
         </div>
       </div>

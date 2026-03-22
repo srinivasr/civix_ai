@@ -1,4 +1,7 @@
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from typing import List, Optional
+from datetime import datetime
 from app.infrastructure.db.neo4j_client import neo4j_client
 
 router = APIRouter()
@@ -91,3 +94,60 @@ def get_analytics_network():
         raise HTTPException(
             status_code=500, detail=f"Failed to generate network analytics: {str(e)}"
         )
+
+
+class DriveCreate(BaseModel):
+    title: str
+    description: str
+    type: str  # 'Drive' or 'Function'
+    date: str
+    booth_id: str
+
+
+@router.post("/drives")
+def create_official_drive(drive: DriveCreate):
+    try:
+        # Create Drive node and link to Booth
+        query = """
+        MATCH (b:Booth {booth_id: $booth_id})
+        CREATE (d:Drive {
+            title: $title,
+            description: $description,
+            type: $type,
+            date: $date,
+            created_at: $created_at
+        })
+        CREATE (b)-[:HAS_DRIVE]->(d)
+        RETURN d
+        """
+        params = {
+            "booth_id": drive.booth_id,
+            "title": drive.title,
+            "description": drive.description,
+            "type": drive.type,
+            "date": drive.date,
+            "created_at": datetime.now().isoformat()
+        }
+        result = neo4j_client.run_query(query, params)
+        if not result:
+            raise HTTPException(status_code=404, detail="Booth not found")
+        return {"status": "success", "message": "Drive created successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/drives")
+def get_all_drives():
+    try:
+        query = """
+        MATCH (b:Booth)-[:HAS_DRIVE]->(d:Drive)
+        RETURN 
+            d.title AS title,
+            d.description AS description,
+            d.type AS type,
+            d.date AS date,
+            b.booth_id AS booth_id,
+            d.created_at AS created_at
+        ORDER BY d.created_at DESC
+        """
+        return neo4j_client.run_query(query)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

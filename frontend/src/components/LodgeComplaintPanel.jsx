@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
 
-const LodgeComplaintPanel = () => {
+const LodgeComplaintPanel = ({ boothId }) => {
   const [epic, setEpic] = useState('');
   const [subject, setSubject] = useState('');
   const [issueType, setIssueType] = useState('Water Supply');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+  const [drives, setDrives] = useState([]);
+
+  React.useEffect(() => {
+    if (boothId) {
+      fetch(`http://localhost:8000/api/v1/drives/${boothId}`)
+        .then(res => res.json())
+        .then(data => setDrives(data))
+        .catch(err => console.error("Failed to fetch drives:", err));
+    }
+  }, [boothId]);
 
   const issueTypes = [
     'Water Supply',
@@ -256,12 +266,56 @@ const LodgeComplaintPanel = () => {
               </div>
               <div style={{ fontSize: '12px', color: 'var(--gray-600)' }}>
                 <strong style={{ display: 'block', fontSize: '9px', textTransform: 'uppercase', color: 'var(--gray-400)' }}>BOOTH IDENTIFIER</strong>
-                ZONE-A / BH-442
+                ZONE-A / BH-{boothId || '442'}
               </div>
               <div style={{ fontSize: '12px', color: 'var(--gray-600)' }}>
                 <strong style={{ display: 'block', fontSize: '9px', textTransform: 'uppercase', color: 'var(--gray-400)' }}>AUTHORIZATION</strong>
                 OFFICIAL_ACCESS_GRANTED
               </div>
+            </div>
+          </div>
+
+          {/* Active Drives Section */}
+          <div style={{ padding: '32px 40px', borderBottom: '1px solid var(--gray-200)', backgroundColor: 'var(--gray-50)' }}>
+            <h4 style={{ fontSize: '10px', fontWeight: '900', color: 'var(--gray-900)', letterSpacing: '0.2em', marginBottom: '20px', textTransform: 'uppercase', borderLeft: '4px solid #D4A843', paddingLeft: '12px' }}>
+              Live Intelligence Feed
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {drives.length === 0 ? (
+                <div style={{ fontSize: '11px', color: 'var(--gray-400)', fontStyle: 'italic', padding: '12px', border: '1px dashed var(--gray-200)' }}>
+                  No active operational drives identified for this jurisdiction.
+                </div>
+              ) : (
+                drives.map((d, i) => (
+                  <div key={i} style={{ 
+                    padding: '16px', 
+                    background: 'white', 
+                    border: '1px solid var(--gray-200)',
+                    borderLeft: `4px solid ${d.type === 'Security' ? '#ef4444' : '#04122e'}`,
+                    position: 'relative'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <span style={{ fontSize: '12px', fontWeight: '900', color: 'var(--navy)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{d.title}</span>
+                      <span style={{ fontSize: '10px', fontWeight: '800', color: 'var(--gray-400)', fontFamily: 'monospace' }}>[{d.date}]</span>
+                    </div>
+                    <p style={{ fontSize: '12px', color: 'var(--gray-600)', margin: 0, lineHeight: '1.5', fontWeight: '500' }}>{d.description}</p>
+                    <div style={{ 
+                      marginTop: '12px', 
+                      display: 'inline-block',
+                      fontSize: '9px', 
+                      fontWeight: '900', 
+                      color: d.type === 'Security' ? '#ef4444' : '#D4A843', 
+                      textTransform: 'uppercase', 
+                      letterSpacing: '0.1em',
+                      backgroundColor: 'var(--gray-50)',
+                      padding: '4px 8px',
+                      border: `1px solid ${d.type === 'Security' ? '#fecaca' : '#fef3c7'}`
+                    }}>
+                      {d.type} ALERT // ACTIVE
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 

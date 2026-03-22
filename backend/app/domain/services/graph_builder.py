@@ -49,6 +49,8 @@ def process_complaints(df):
 
         MERGE (c:Complaint {complaint_id: $complaint_id})
         SET c.issue_type = $issue_type,
+            c.subject = $subject,
+            c.description = $description,
             c.timestamp = $timestamp,
             c.status = $status
 
@@ -62,6 +64,8 @@ def process_complaints(df):
             {
                 "complaint_id": int(row["complaint_id"]),
                 "epic": str(row["epic"]).strip(),
+                "subject": str(row.get("subject", "")).strip(),
+                "description": str(row.get("description", "")).strip(),
                 "issue_type": str(row["issue_type"]).strip(),
                 "timestamp": str(row["timestamp"]).strip(),
                 "status": str(row["status"]).strip(),

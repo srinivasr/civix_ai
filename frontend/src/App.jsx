@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Dashboard from './components/Dashboard';
+import LodgeComplaintPanel from './components/LodgeComplaintPanel';
 import './index.css';
 
 const NAV_ITEMS = [
@@ -80,83 +81,139 @@ const PAGE_TITLES = {
   upload: 'Upload Data',
   about: 'About System',
   settings: 'Settings',
+  lodge_complaint: 'Voter Complaint Portal',
 };
 
 function App() {
   const [tab, setTab] = useState('overview');
+  const [userRole, setUserRole] = useState('official'); // 'official' or 'voter'
   const [expanded] = useState(true);
+
+  // Role toggle for development testing
+  const toggleRole = () => {
+    setUserRole(prev => prev === 'official' ? 'voter' : 'official');
+    setTab('overview');
+  };
 
   return (
     <div className="app">
-      {/* ── Expanding Sidebar ── */}
-      <div className={`sidebar ${expanded ? 'expanded' : ''}`}>
-        <div className="sidebar-top">
-          {/* Brand */}
-          <div className="sidebar-brand">
-            <div className="logo">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: 18, height: 18 }}>
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-              </svg>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <span className="brand-name" style={{ letterSpacing: '1px' }}>CIVIX AI</span>
-              <span style={{ fontSize: 9, color: 'var(--blue-100)', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>National Intelligence</span>
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <nav className="sidebar-nav">
-            {NAV_ITEMS.map((item) => (
-              <div
-                key={item.id}
-                className={`nav-item ${tab === item.id ? 'active' : ''}`}
-                onClick={() => setTab(item.id)}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </div>
-            ))}
-          </nav>
-        </div>
-
-        {/* Bottom Actions */}
-        <div className="sidebar-bottom">
-          <div className="sidebar-nav" style={{ marginBottom: 12 }}>
-            <div
-              className={`nav-item ${tab === ABOUT_ITEM.id ? 'active' : ''}`}
-              onClick={() => setTab(ABOUT_ITEM.id)}
-            >
-              {ABOUT_ITEM.icon}
-              <span>{ABOUT_ITEM.label}</span>
-            </div>
-            <div
-              className={`nav-item ${tab === SETTINGS_ITEM.id ? 'active' : ''}`}
-              onClick={() => setTab(SETTINGS_ITEM.id)}
-            >
-              {SETTINGS_ITEM.icon}
-              <span>{SETTINGS_ITEM.label}</span>
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 24px', background: 'var(--blue-700)', borderTop: '1px solid rgba(255,255,255,0.05)', margin: '0 -12px' }}>
-            <div style={{ width: 8, height: 8, background: 'var(--amber-500)', borderRadius: 0 }} />
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: 9, fontWeight: 800, color: 'var(--white)', letterSpacing: '0.08em' }}>ADMIN_04</span>
-              <span style={{ fontSize: 8, color: 'var(--blue-100)', letterSpacing: '0.1em', opacity: 0.8 }}>AUTHORIZED ACCESS</span>
-            </div>
-          </div>
-        </div>
+      {/* ── Role Toggle (Dev Only) ── */}
+      <div style={{
+        position: 'fixed',
+        bottom: 20,
+        right: 20,
+        zIndex: 1000,
+        background: 'rgba(0,0,0,0.8)',
+        padding: '10px',
+        borderRadius: '8px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        color: 'white',
+        fontSize: '11px',
+        fontWeight: 'bold'
+      }}>
+        ROLE: {userRole.toUpperCase()}
+        <button
+          onClick={toggleRole}
+          style={{
+            padding: '4px 8px',
+            background: 'var(--blue-500)',
+            border: 'none',
+            borderRadius: '4px',
+            color: 'white',
+            cursor: 'pointer'
+          }}
+        >
+          TOGGLE
+        </button>
       </div>
 
-      {/* ── Main ── */}
-      <div className="main">
-        <header className="header">
-          <h1>{PAGE_TITLES[tab]}</h1>
-          <div className="header-right">
-            <div className="avatar">A</div>
+      {/* ── Expanding Sidebar (Only for Officials) ── */}
+      {userRole === 'official' && (
+        <div className={`sidebar ${expanded ? 'expanded' : ''}`}>
+          <div className="sidebar-top">
+            {/* Brand */}
+            <div className="sidebar-brand">
+              <div className="logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: 18, height: 18 }}>
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <span className="brand-name" style={{ letterSpacing: '1px' }}>CIVIX AI</span>
+                <span style={{ fontSize: 9, color: 'var(--blue-100)', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>National Intelligence</span>
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <nav className="sidebar-nav">
+              {NAV_ITEMS.map((item) => (
+                <div
+                  key={item.id}
+                  className={`nav-item ${tab === item.id ? 'active' : ''}`}
+                  onClick={() => setTab(item.id)}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </div>
+              ))}
+            </nav>
           </div>
-        </header>
-        <div className="content">
-          <Dashboard tab={tab} setTab={setTab} />
+
+          {/* Bottom Actions */}
+          <div className="sidebar-bottom">
+            <div className="sidebar-nav" style={{ marginBottom: 12 }}>
+              <div
+                className={`nav-item ${tab === ABOUT_ITEM.id ? 'active' : ''}`}
+                onClick={() => setTab(ABOUT_ITEM.id)}
+              >
+                {ABOUT_ITEM.icon}
+                <span>{ABOUT_ITEM.label}</span>
+              </div>
+              <div
+                className={`nav-item ${tab === SETTINGS_ITEM.id ? 'active' : ''}`}
+                onClick={() => setTab(SETTINGS_ITEM.id)}
+              >
+                {SETTINGS_ITEM.icon}
+                <span>{SETTINGS_ITEM.label}</span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 24px', background: 'var(--blue-700)', borderTop: '1px solid rgba(255,255,255,0.05)', margin: '0 -12px' }}>
+              <div style={{ width: 8, height: 8, background: 'var(--amber-500)', borderRadius: 0 }} />
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: 9, fontWeight: 800, color: 'var(--white)', letterSpacing: '0.08em' }}>OFFICIAL_04</span>
+                <span style={{ fontSize: 8, color: 'var(--blue-100)', letterSpacing: '0.1em', opacity: 0.8 }}>AUTHORIZED ACCESS</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Main ── */}
+      <div className="main" style={{ 
+        marginLeft: userRole === 'official' ? '' : '0', 
+        width: userRole === 'official' ? '' : '100%',
+        background: userRole === 'voter' ? 'var(--bg)' : 'white'
+      }}>
+        {userRole === 'official' && (
+          <header className="header">
+            <h1>{PAGE_TITLES[tab]}</h1>
+            <div className="header-right">
+              <div style={{ marginRight: 15, textAlign: 'right', display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: 10, fontWeight: 800, opacity: 0.7 }}>ADMIN_PORTAL</span>
+                <span style={{ fontSize: 9, opacity: 0.5 }}>OFFICIAL_ACCESS</span>
+              </div>
+              <div className="avatar">A</div>
+            </div>
+          </header>
+        )}
+        <div className="content" style={{ padding: userRole === 'voter' ? '0' : '28px 32px' }}>
+          {userRole === 'official' ? (
+            <Dashboard tab={tab} setTab={setTab} />
+          ) : (
+            <LodgeComplaintPanel />
+          )}
         </div>
       </div>
     </div>

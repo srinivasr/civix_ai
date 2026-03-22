@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import LodgeComplaintPanel from './components/LodgeComplaintPanel';
+import LoginPage from './components/LoginPage';
 import './index.css';
 
 const NAV_ITEMS = [
@@ -69,7 +70,7 @@ const SETTINGS_ITEM = {
   icon: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51-1z" />
     </svg>
   ),
 };
@@ -85,55 +86,33 @@ const PAGE_TITLES = {
 };
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [tab, setTab] = useState('overview');
   const [userRole, setUserRole] = useState('official'); // 'official' or 'voter'
   const [expanded] = useState(true);
 
-  // Role toggle for development testing
-  const toggleRole = () => {
-    setUserRole(prev => prev === 'official' ? 'voter' : 'official');
+  const handleLogin = (type) => {
+    setIsLoggedIn(true);
+    // Map 'booth' to 'voter' role for internal logic, 'official' remains 'official'
+    setUserRole(type === 'booth' ? 'voter' : 'official');
     setTab('overview');
   };
 
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setTab('overview');
+  };
+
+  if (!isLoggedIn) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
   return (
     <div className="app">
-      {/* ── Role Toggle (Dev Only) ── */}
-      <div style={{
-        position: 'fixed',
-        bottom: 20,
-        right: 20,
-        zIndex: 1000,
-        background: 'rgba(0,0,0,0.8)',
-        padding: '10px',
-        borderRadius: '8px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        color: 'white',
-        fontSize: '11px',
-        fontWeight: 'bold'
-      }}>
-        ROLE: {userRole.toUpperCase()}
-        <button
-          onClick={toggleRole}
-          style={{
-            padding: '4px 8px',
-            background: 'var(--blue-500)',
-            border: 'none',
-            borderRadius: '4px',
-            color: 'white',
-            cursor: 'pointer'
-          }}
-        >
-          TOGGLE
-        </button>
-      </div>
-
-      {/* ── Expanding Sidebar (Only for Officials) ── */}
+      {/* ── Sidebar (Only for Officials) ── */}
       {userRole === 'official' && (
         <div className={`sidebar ${expanded ? 'expanded' : ''}`}>
           <div className="sidebar-top">
-            {/* Brand */}
             <div className="sidebar-brand">
               <div className="logo">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: 18, height: 18 }}>
@@ -146,7 +125,6 @@ function App() {
               </div>
             </div>
 
-            {/* Navigation */}
             <nav className="sidebar-nav">
               {NAV_ITEMS.map((item) => (
                 <div
@@ -161,7 +139,6 @@ function App() {
             </nav>
           </div>
 
-          {/* Bottom Actions */}
           <div className="sidebar-bottom">
             <div className="sidebar-nav" style={{ marginBottom: 12 }}>
               <div
@@ -178,7 +155,17 @@ function App() {
                 {SETTINGS_ITEM.icon}
                 <span>{SETTINGS_ITEM.label}</span>
               </div>
+              {/* Logout Button */}
+              <div className="nav-item" onClick={handleLogout} style={{ marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px' }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 18, height: 18 }}>
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                <span>Logout</span>
+              </div>
             </div>
+
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 24px', background: 'var(--blue-700)', borderTop: '1px solid rgba(255,255,255,0.05)', margin: '0 -12px' }}>
               <div style={{ width: 8, height: 8, background: 'var(--amber-500)', borderRadius: 0 }} />
               <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -191,8 +178,8 @@ function App() {
       )}
 
       {/* ── Main ── */}
-      <div className="main" style={{ 
-        marginLeft: userRole === 'official' ? '' : '0', 
+      <div className="main" style={{
+        marginLeft: userRole === 'official' ? '' : '0',
         width: userRole === 'official' ? '' : '100%',
         background: userRole === 'voter' ? 'var(--bg)' : 'white'
       }}>
@@ -208,6 +195,37 @@ function App() {
             </div>
           </header>
         )}
+
+        {/* Voter Header with Logout */}
+        {userRole === 'voter' && (
+          <div style={{
+            padding: '12px 40px',
+            background: 'white',
+            borderBottom: '1px solid var(--gray-100)',
+            display: 'flex',
+            justifyContent: 'flex-end'
+          }}>
+            <button
+              onClick={handleLogout}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--gray-500)',
+                fontSize: '11px',
+                fontWeight: '800',
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              Terminate Session <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--red-500)' }} />
+            </button>
+          </div>
+        )}
+
         <div className="content" style={{ padding: userRole === 'voter' ? '0' : '28px 32px' }}>
           {userRole === 'official' ? (
             <Dashboard tab={tab} setTab={setTab} />

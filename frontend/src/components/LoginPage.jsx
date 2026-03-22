@@ -4,38 +4,62 @@ import {
     ArrowRight, Globe, BadgeCheck
 } from 'lucide-react';
 
-export default function LoginPage() {
-    const [view, setView] = useState('signup'); // 'signup' or 'login'
+export default function LoginPage({ onLogin }) {
+    const [view, setView] = useState('login'); // 'signup' or 'login'
     const [userType, setUserType] = useState('booth'); // 'booth' or 'official'
 
-    const navy = "bg-[#0f172a]";
-    const goldText = "text-[#D4AF37]";
-    const goldBg = "bg-[#D4AF37]";
+    const navy = "#0f172a";
+    const navyDark = "#020617";
+    const gold = "#D4AF37";
+    const slate400 = "#94a3b8";
+    const slate500 = "#64748b";
+    const slate50 = "#f8fafc";
+    const slate100 = "#f1f5f9";
+    const slate200 = "#e2e8f0";
+    const slate300 = "#cbd5e1";
+    const white = "#ffffff";
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onLogin(userType);
+    };
 
     return (
-        <div className="flex h-screen w-full bg-white font-sans overflow-hidden">
+        <div style={{ display: 'flex', height: '100vh', width: '100%', backgroundColor: white, fontFamily: 'Public Sans, sans-serif', overflow: 'hidden' }}>
 
             {/* LEFT SIDE: Solid Navy Branding */}
-            <div className={`hidden lg:flex w-1/2 ${navy} flex-col justify-center px-20 relative`}>
-                <div className="max-w-md relative z-10">
-
-                    {/* LOGO REMOVED & TEXT REALIGNED */}
-                    <div className="flex flex-col mb-12">
-                        <span className={`font-black text-4xl tracking-tighter leading-none uppercase ${goldText}`}>
+            <div style={{
+                display: 'none', // Default hidden for mobile
+                width: '50%',
+                backgroundColor: navy,
+                flexDirection: 'column',
+                justifyContent: 'center',
+                padding: '0 80px',
+                position: 'relative'
+            }} className="lg-flex">
+                <style dangerouslySetInnerHTML={{
+                    __html: `
+          @media (min-width: 1024px) {
+            .lg-flex { display: flex !important; }
+          }
+        `}} />
+                <div style={{ maxWidth: '448px', position: 'relative', zIndex: 10 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '48px' }}>
+                        <span style={{ fontWeight: 900, fontSize: '36px', letterSpacing: '-0.05em', lineHeight: 1, textTransform: 'uppercase', color: gold }}>
                             Civix AI
                         </span>
-                        <span className="text-slate-500 text-[10px] font-black tracking-[0.4em] mt-2 uppercase border-t border-slate-800 pt-2 w-fit">
+                        <span style={{ color: slate500, fontSize: '10px', fontWeight: 900, letterSpacing: '0.4em', marginTop: '8px', textTransform: 'uppercase', borderTop: `1px solid #1e293b`, paddingTop: '8px', width: 'fit-content' }}>
                             Booth Intelligence
                         </span>
                     </div>
 
-                    <h1 className="text-white text-5xl font-black tracking-tight mb-6 leading-none uppercase">
+                    <h1 style={{ color: white, fontSize: '48px', fontWeight: 900, letterSpacing: '-0.025em', marginBottom: '24px', lineHeight: 1, textTransform: 'uppercase' }}>
                         National <br /> Agency Portal
                     </h1>
 
-                    <div className={`h-1.5 w-20 ${goldBg} mb-10`} />
+                    <div style={{ height: '6px', width: '80px', backgroundColor: gold, marginBottom: '40px' }} />
 
-                    <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-sm">
+                    <p style={{ color: slate400, fontSize: '18px', fontWeight: 500, lineHeight: 1.625, maxWidth: '384px' }}>
                         Dedicated infrastructure for Booth Officials and Government Administration.
                         Real-time complaint logging and encrypted data relay.
                     </p>
@@ -43,45 +67,106 @@ export default function LoginPage() {
             </div>
 
             {/* RIGHT SIDE: Form Portal */}
-            <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 lg:px-24 bg-white overflow-y-auto">
-                <div className="max-w-md w-full mx-auto py-12">
+            <div style={{
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                padding: '0 32px',
+                backgroundColor: white,
+                overflowY: 'auto'
+            }} className="right-panel">
+                <style dangerouslySetInnerHTML={{
+                    __html: `
+          @media (min-width: 640px) { .right-panel { padding: 0 64px !important; } }
+          @media (min-width: 1024px) { 
+            .right-panel { width: 50% !important; padding: 0 96px !important; } 
+          }
+        `}} />
+                <div style={{ maxWidth: '448px', width: '100%', margin: '0 auto', padding: '48px 0' }}>
 
-                    <div className="mb-12 text-right">
+                    <div style={{ marginBottom: '48px', textAlign: 'right' }}>
                         <button
                             onClick={() => setView(view === 'login' ? 'signup' : 'login')}
-                            className="text-slate-400 text-[10px] font-black uppercase tracking-widest hover:text-[#0f172a] transition-colors"
+                            style={{
+                                background: 'none',
+                                border: 'none',
+                                color: slate400,
+                                fontSize: '10px',
+                                fontWeight: 900,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.1em',
+                                cursor: 'pointer',
+                                transition: 'color 0.15s ease'
+                            }}
+                            onMouseEnter={(e) => e.target.style.color = navy}
+                            onMouseLeave={(e) => e.target.style.color = slate400}
                         >
                             {view === 'login' ? 'Register New Access →' : 'Already Authorized? Sign In →'}
                         </button>
                     </div>
 
-                    <div className="mb-10">
-                        <h2 className="text-3xl font-black text-[#0f172a] tracking-tight uppercase">
+                    <div style={{ marginBottom: '40px' }}>
+                        <h2 style={{ fontSize: '30px', fontWeight: 900, color: navy, letterSpacing: '-0.025em', textTransform: 'uppercase' }}>
                             {view === 'login' ? 'Portal Login' : 'System Registration'}
                         </h2>
-                        <p className="text-slate-400 text-[10px] font-black mt-2 uppercase tracking-[0.2em]">
+                        <p style={{ color: slate400, fontSize: '10px', fontWeight: 900, marginTop: '8px', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                             Authorized Access Only
                         </p>
                     </div>
 
-                    <div className="flex border-2 border-slate-100 rounded-2xl mb-10 p-1.5 bg-slate-50">
+                    <div style={{ display: 'flex', border: `2px solid ${slate100}`, borderRadius: '16px', marginBottom: '40px', padding: '6px', backgroundColor: slate50 }}>
                         <button
                             onClick={() => setUserType('booth')}
-                            className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-[10px] font-black tracking-widest transition-all ${userType === 'booth' ? `${navy} text-white shadow-xl` : 'text-slate-400'}`}
+                            style={{
+                                flex: 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                padding: '14px 0',
+                                borderRadius: '12px',
+                                fontSize: '10px',
+                                fontWeight: 900,
+                                letterSpacing: '0.1em',
+                                border: 'none',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                backgroundColor: userType === 'booth' ? navy : 'transparent',
+                                color: userType === 'booth' ? white : slate400,
+                                boxShadow: userType === 'booth' ? '0 20px 25px -5px rgba(0, 0, 0, 0.1)' : 'none'
+                            }}
                         >
-                            <MapPin size={14} className={userType === 'booth' ? goldText : ''} /> BOOTH
+                            <MapPin size={14} color={userType === 'booth' ? gold : slate400} /> BOOTH
                         </button>
                         <button
                             onClick={() => setUserType('official')}
-                            className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-[10px] font-black tracking-widest transition-all ${userType === 'official' ? `${navy} text-white shadow-xl` : 'text-slate-400'}`}
+                            style={{
+                                flex: 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                padding: '14px 0',
+                                borderRadius: '12px',
+                                fontSize: '10px',
+                                fontWeight: 900,
+                                letterSpacing: '0.1em',
+                                border: 'none',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                backgroundColor: userType === 'official' ? navy : 'transparent',
+                                color: userType === 'official' ? white : slate400,
+                                boxShadow: userType === 'official' ? '0 20px 25px -5px rgba(0, 0, 0, 0.1)' : 'none'
+                            }}
                         >
-                            <ShieldCheck size={14} className={userType === 'official' ? goldText : ''} /> OFFICIAL
+                            <ShieldCheck size={14} color={userType === 'official' ? gold : slate400} /> OFFICIAL
                         </button>
                     </div>
 
-                    <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+                    <form style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} onSubmit={handleSubmit}>
                         {view === 'signup' && (
-                            <div className="space-y-5 animate-in fade-in duration-300">
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                                 {userType === 'booth' ? (
                                     <>
                                         <FlatField label="Name of the Official" icon={<User size={16} />} placeholder="In-charge Full Name" />
@@ -91,9 +176,9 @@ export default function LoginPage() {
                                 ) : (
                                     <>
                                         <FlatField label="Gov Official ID" icon={<ShieldCheck size={16} />} placeholder="GOV-XXXX-XXXX" />
-                                        <div className="space-y-1.5">
-                                            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Department</label>
-                                            <select className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-4 text-xs font-bold outline-none focus:border-[#D4AF37]">
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                            <label style={{ fontSize: '9px', fontWeight: 900, color: slate400, textTransform: 'uppercase', letterSpacing: '0.1em', marginLeft: '4px' }}>Department</label>
+                                            <select style={{ width: '100%', backgroundColor: slate50, border: `1px solid ${slate200}`, borderRadius: '12px', padding: '16px', fontSize: '12px', fontWeight: 700, outline: 'none' }}>
                                                 <option>Election Commission</option>
                                                 <option>Administration</option>
                                                 <option>Constituency Security</option>
@@ -104,14 +189,32 @@ export default function LoginPage() {
                                 <FlatField label="Password" icon={<Lock size={16} />} placeholder="••••••••" type="password" />
                                 <FlatField label="Confirm Password" icon={<Lock size={16} />} placeholder="••••••••" type="password" />
 
-                                <button className={`w-full ${navy} text-white py-4 mt-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-black transition-all shadow-lg`}>
-                                    {userType === 'booth' ? 'Register Booth' : 'Register Official'} <ArrowRight size={16} className={goldText} />
+                                <button type="submit" style={{
+                                    width: '100%',
+                                    backgroundColor: navy,
+                                    color: white,
+                                    padding: '16px',
+                                    marginTop: '16px',
+                                    borderRadius: '16px',
+                                    fontWeight: 900,
+                                    fontSize: '10px',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.3em',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '12px',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    {userType === 'booth' ? 'Register Booth' : 'Register Official'} <ArrowRight size={16} color={gold} />
                                 </button>
                             </div>
                         )}
 
                         {view === 'login' && (
-                            <div className="space-y-5 animate-in fade-in duration-300">
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                                 {userType === 'booth' ? (
                                     <FlatField label="Official Name" icon={<User size={16} />} placeholder="Enter registered name" />
                                 ) : (
@@ -119,17 +222,34 @@ export default function LoginPage() {
                                 )}
                                 <FlatField label="Password" icon={<Lock size={16} />} placeholder="••••••••" type="password" />
 
-                                <button className={`w-full ${navy} text-white py-4 mt-8 rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-black transition-all`}>
-                                    Authorize Login <ArrowRight size={16} className={goldText} />
+                                <button type="submit" style={{
+                                    width: '100%',
+                                    backgroundColor: navy,
+                                    color: white,
+                                    padding: '16px',
+                                    marginTop: '32px',
+                                    borderRadius: '16px',
+                                    fontWeight: 900,
+                                    fontSize: '10px',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.3em',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '12px',
+                                    border: 'none',
+                                    cursor: 'pointer'
+                                }}>
+                                    Authorize Login <ArrowRight size={16} color={gold} />
                                 </button>
                             </div>
                         )}
                     </form>
 
-                    <footer className="mt-12 text-center">
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
+                    <footer style={{ marginTop: '48px', textAlign: 'center' }}>
+                        <p style={{ fontSize: '10px', color: slate400, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', lineHeight: 1.6 }}>
                             © 2026 Civix AI • National Data Network <br />
-                            <span className={goldText}>Secure Intelligence Node</span>
+                            <span style={{ color: gold }}>Secure Intelligence Node</span>
                         </p>
                     </footer>
                 </div>
@@ -140,15 +260,32 @@ export default function LoginPage() {
 }
 
 function FlatField({ label, icon, placeholder, type = "text" }) {
+    const slate200 = "#e2e8f0";
+    const slate50 = "#f8fafc";
+    const slate300 = "#cbd5e1";
+    const slate400 = "#94a3b8";
+
     return (
-        <div className="space-y-1.5">
-            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
-            <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300">{icon}</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <label style={{ fontSize: '9px', fontWeight: 900, color: slate400, textTransform: 'uppercase', letterSpacing: '0.1em', marginLeft: '4px' }}>{label}</label>
+            <div style={{ position: 'relative' }}>
+                <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: slate300 }}>{icon}</div>
                 <input
                     type={type}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 pl-12 pr-4 text-xs font-bold outline-none focus:border-[#D4AF37] placeholder:text-slate-200 transition-all"
+                    style={{
+                        width: '100%',
+                        backgroundColor: slate50,
+                        border: `1px solid ${slate200}`,
+                        borderRadius: '12px',
+                        padding: '16px 16px 16px 48px',
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        outline: 'none',
+                        transition: 'border-color 0.2s ease'
+                    }}
                     placeholder={placeholder}
+                    onFocus={(e) => e.target.style.borderColor = "#D4AF37"}
+                    onBlur={(e) => e.target.style.borderColor = slate200}
                 />
             </div>
         </div>

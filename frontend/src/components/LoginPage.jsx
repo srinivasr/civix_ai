@@ -7,22 +7,21 @@ import {
 export default function LoginPage({ onLogin }) {
     const [view, setView] = useState('login'); // 'signup' or 'login'
     const [userType, setUserType] = useState('booth'); // 'booth' or 'official'
-    const [boothId, setBoothId] = useState('');
 
     const navy = "#0f172a";
     const navyDark = "#020617";
     const gold = "#D4AF37";
     const slate400 = "#94a3b8";
     const slate500 = "#64748b";
-    const white = "#ffffff";
     const slate50 = "#f8fafc";
     const slate100 = "#f1f5f9";
     const slate200 = "#e2e8f0";
     const slate300 = "#cbd5e1";
+    const white = "#ffffff";
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onLogin(userType, userType === 'booth' ? boothId : null);
+        onLogin(userType);
     };
 
     return (
@@ -30,7 +29,7 @@ export default function LoginPage({ onLogin }) {
 
             {/* LEFT SIDE: Solid Navy Branding */}
             <div style={{
-                display: 'none',
+                display: 'none', // Default hidden for mobile
                 width: '50%',
                 backgroundColor: navy,
                 flexDirection: 'column',
@@ -97,8 +96,11 @@ export default function LoginPage({ onLogin }) {
                                 fontWeight: 900,
                                 textTransform: 'uppercase',
                                 letterSpacing: '0.1em',
-                                cursor: 'pointer'
+                                cursor: 'pointer',
+                                transition: 'color 0.15s ease'
                             }}
+                            onMouseEnter={(e) => e.target.style.color = navy}
+                            onMouseLeave={(e) => e.target.style.color = slate400}
                         >
                             {view === 'login' ? 'Register New Access →' : 'Already Authorized? Sign In →'}
                         </button>
@@ -126,10 +128,13 @@ export default function LoginPage({ onLogin }) {
                                 borderRadius: '12px',
                                 fontSize: '10px',
                                 fontWeight: 900,
+                                letterSpacing: '0.1em',
                                 border: 'none',
                                 cursor: 'pointer',
+                                transition: 'all 0.2s ease',
                                 backgroundColor: userType === 'booth' ? navy : 'transparent',
-                                color: userType === 'booth' ? white : slate400
+                                color: userType === 'booth' ? white : slate400,
+                                boxShadow: userType === 'booth' ? '0 20px 25px -5px rgba(0, 0, 0, 0.1)' : 'none'
                             }}
                         >
                             <MapPin size={14} color={userType === 'booth' ? gold : slate400} /> BOOTH
@@ -146,10 +151,13 @@ export default function LoginPage({ onLogin }) {
                                 borderRadius: '12px',
                                 fontSize: '10px',
                                 fontWeight: 900,
+                                letterSpacing: '0.1em',
                                 border: 'none',
                                 cursor: 'pointer',
+                                transition: 'all 0.2s ease',
                                 backgroundColor: userType === 'official' ? navy : 'transparent',
-                                color: userType === 'official' ? white : slate400
+                                color: userType === 'official' ? white : slate400,
+                                boxShadow: userType === 'official' ? '0 20px 25px -5px rgba(0, 0, 0, 0.1)' : 'none'
                             }}
                         >
                             <ShieldCheck size={14} color={userType === 'official' ? gold : slate400} /> OFFICIAL
@@ -157,19 +165,58 @@ export default function LoginPage({ onLogin }) {
                     </div>
 
                     <form style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} onSubmit={handleSubmit}>
-                        {view === 'login' && (
+                        {view === 'signup' && (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                                 {userType === 'booth' ? (
                                     <>
-                                        <FlatField 
-                                            label="Booth ID" 
-                                            icon={<BadgeCheck size={16} />} 
-                                            placeholder="Enter registered Booth #" 
-                                            value={boothId}
-                                            onChange={(e) => setBoothId(e.target.value)}
-                                        />
-                                        <FlatField label="Official Name" icon={<User size={16} />} placeholder="Enter registered name" />
+                                        <FlatField label="Name of the Official" icon={<User size={16} />} placeholder="In-charge Full Name" />
+                                        <FlatField label="Booth ID" icon={<BadgeCheck size={16} />} placeholder="Enter unique Booth #" />
+                                        <FlatField label="State" icon={<Globe size={16} />} placeholder="Enter State / Union Territory" />
                                     </>
+                                ) : (
+                                    <>
+                                        <FlatField label="Gov Official ID" icon={<ShieldCheck size={16} />} placeholder="GOV-XXXX-XXXX" />
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                            <label style={{ fontSize: '9px', fontWeight: 900, color: slate400, textTransform: 'uppercase', letterSpacing: '0.1em', marginLeft: '4px' }}>Department</label>
+                                            <select style={{ width: '100%', backgroundColor: slate50, border: `1px solid ${slate200}`, borderRadius: '12px', padding: '16px', fontSize: '12px', fontWeight: 700, outline: 'none' }}>
+                                                <option>Election Commission</option>
+                                                <option>Administration</option>
+                                                <option>Constituency Security</option>
+                                            </select>
+                                        </div>
+                                    </>
+                                )}
+                                <FlatField label="Password" icon={<Lock size={16} />} placeholder="••••••••" type="password" />
+                                <FlatField label="Confirm Password" icon={<Lock size={16} />} placeholder="••••••••" type="password" />
+
+                                <button type="submit" style={{
+                                    width: '100%',
+                                    backgroundColor: navy,
+                                    color: white,
+                                    padding: '16px',
+                                    marginTop: '16px',
+                                    borderRadius: '16px',
+                                    fontWeight: 900,
+                                    fontSize: '10px',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.3em',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '12px',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                                }}>
+                                    {userType === 'booth' ? 'Register Booth' : 'Register Official'} <ArrowRight size={16} color={gold} />
+                                </button>
+                            </div>
+                        )}
+
+                        {view === 'login' && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                {userType === 'booth' ? (
+                                    <FlatField label="Official Name" icon={<User size={16} />} placeholder="Enter registered name" />
                                 ) : (
                                     <FlatField label="Gov Official ID" icon={<ShieldCheck size={16} />} placeholder="Enter ID" />
                                 )}
@@ -186,15 +233,16 @@ export default function LoginPage({ onLogin }) {
                                     fontSize: '10px',
                                     textTransform: 'uppercase',
                                     letterSpacing: '0.3em',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '12px',
                                     border: 'none',
                                     cursor: 'pointer'
                                 }}>
                                     Authorize Login <ArrowRight size={16} color={gold} />
                                 </button>
                             </div>
-                        )}
-                        {view === 'signup' && (
-                            <p style={{ textAlign: 'center', fontSize: '12px', color: slate400 }}>Registration is restricted to central administrators.</p>
                         )}
                     </form>
 
@@ -206,11 +254,12 @@ export default function LoginPage({ onLogin }) {
                     </footer>
                 </div>
             </div>
+
         </div>
     );
 }
 
-function FlatField({ label, icon, placeholder, type = "text", value, onChange }) {
+function FlatField({ label, icon, placeholder, type = "text" }) {
     const slate200 = "#e2e8f0";
     const slate50 = "#f8fafc";
     const slate300 = "#cbd5e1";
@@ -223,8 +272,6 @@ function FlatField({ label, icon, placeholder, type = "text", value, onChange })
                 <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: slate300 }}>{icon}</div>
                 <input
                     type={type}
-                    value={value}
-                    onChange={onChange}
                     style={{
                         width: '100%',
                         backgroundColor: slate50,
@@ -233,9 +280,12 @@ function FlatField({ label, icon, placeholder, type = "text", value, onChange })
                         padding: '16px 16px 16px 48px',
                         fontSize: '12px',
                         fontWeight: 700,
-                        outline: 'none'
+                        outline: 'none',
+                        transition: 'border-color 0.2s ease'
                     }}
                     placeholder={placeholder}
+                    onFocus={(e) => e.target.style.borderColor = "#D4AF37"}
+                    onBlur={(e) => e.target.style.borderColor = slate200}
                 />
             </div>
         </div>

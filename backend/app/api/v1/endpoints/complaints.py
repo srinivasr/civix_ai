@@ -38,6 +38,7 @@ class LodgeComplaintRequest(BaseModel):
     voter_epic: str
     phone_number: str
     issue_type: str
+    subject: str
     description: str
 
 
@@ -47,6 +48,30 @@ class LegacyComplaintRequest(BaseModel):
     subject: str
     issue_type: str
     description: str
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  GET  /
+# ─────────────────────────────────────────────────────────────────────────────
+@router.get("/")
+async def list_complaints():
+    """Retrieve all complaints from the intelligence registry."""
+    try:
+        _ensure_csv_exists()
+        df = pd.read_csv(COMPLAINTS_CSV)
+        # Ensure all columns exist
+        for col in CSV_COLUMNS:
+            if col not in df.columns:
+                df[col] = ""
+        
+        # Sort by timestamp descending
+        if not df.empty and "timestamp" in df.columns:
+            df = df.sort_values(by="timestamp", ascending=False)
+            
+        return df.to_dict(orient="records")
+    except Exception as e:
+        print(f"Error listing complaints: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -70,7 +95,7 @@ async def lodge_complaint_sms(request: LodgeComplaintRequest):
             "phone_number": request.phone_number,
             "issue_type": request.issue_type,
             "issue_classification": request.issue_type,
-            "subject": request.issue_type,
+            "subject": request.subject,
             "description": request.description,
             "timestamp": timestamp,
             "status": "Open",

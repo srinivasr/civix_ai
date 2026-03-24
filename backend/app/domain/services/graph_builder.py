@@ -83,7 +83,7 @@ def process_complaints(df):
         OPTIONAL MATCH (p:Person {epic_id: $epic})
         WITH p
         WHERE p IS NOT NULL
-
+        SET p.phone_number = $phone_number
         MERGE (i:Issue {complaint_id: $complaint_id})
         SET i.type = $issue_type,
             i.status = $status,
@@ -108,7 +108,8 @@ def process_complaints(df):
             query,
             {
                 "complaint_id": int(row["complaint_id"]),
-                "epic": str(row["epic"]).strip(),
+                "epic": str(row["epic"] if "epic" in row else row["voter_epic"]).strip(),
+                "phone_number": str(row["phone_number"]).strip() if "phone_number" in row else "",
                 "issue_type": str(row["issue_type"]).strip(),
                 "timestamp": str(row["timestamp"]).strip(),
                 "status": str(row["status"]).strip(),

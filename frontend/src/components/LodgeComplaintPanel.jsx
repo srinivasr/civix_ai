@@ -8,6 +8,7 @@ const LodgeComplaintPanel = ({ boothId }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [drives, setDrives] = useState([]);
+  const [phone, setPhone] = useState('');
 
   React.useEffect(() => {
     if (boothId) {
@@ -35,16 +36,17 @@ const LodgeComplaintPanel = ({ boothId }) => {
     setMessage(null);
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/complaints/', {
+      const response = await fetch('http://localhost:8000/api/v1/complaints/lodge-complaint', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          epic,
-          subject,
+          voter_epic: epic,
+          phone_number: phone,
           issue_type: issueType,
-          description
+          subject: subject,
+          description: description
         }),
       });
 
@@ -54,6 +56,7 @@ const LodgeComplaintPanel = ({ boothId }) => {
         setMessage({ type: 'success', text: `INCIDENT REPORT #${data.complaint_id} REGISTERED SUCCESSFULLY.` });
         setEpic('');
         setSubject('');
+        setPhone('');
         setDescription('');
       } else {
         setMessage({ type: 'error', text: data.detail || 'DISPATCH ERROR: SYSTEM UNREACHABLE.' });
@@ -129,7 +132,7 @@ const LodgeComplaintPanel = ({ boothId }) => {
               </h3>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginBottom: '40px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px', marginBottom: '40px' }}>
               <div className="form-group">
                 <label style={{ display: 'block', marginBottom: '8px', fontSize: '11px', fontWeight: '900', color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Voter EPIC ID / Serial
@@ -149,6 +152,28 @@ const LodgeComplaintPanel = ({ boothId }) => {
                     fontWeight: '600',
                     background: 'var(--gray-50)',
                     fontFamily: 'monospace'
+                  }}
+                />
+              </div>
+
+              <div className="form-group">
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '11px', fontWeight: '900', color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Contact Number
+                </label>
+                <input
+                  type="tel"
+                  required
+                  placeholder="E.G. 9876543210"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  style={{ 
+                    width: '100%', 
+                    padding: '14px', 
+                    borderRadius: '0', 
+                    border: '1.5px solid var(--gray-200)', 
+                    fontSize: '15px', 
+                    fontWeight: '600',
+                    background: 'var(--gray-50)'
                   }}
                 />
               </div>

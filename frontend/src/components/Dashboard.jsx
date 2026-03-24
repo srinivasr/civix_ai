@@ -4,6 +4,7 @@ import UploadPanel from './UploadPanel';
 import AboutPanel from './AboutPanel';
 import GraphAnalyticsPanel from './GraphAnalyticsPanel';
 import DrivesPanel from './DrivesPanel';
+import ComplaintsPanel from './ComplaintsPanel';
 
 const API_BASE = 'http://localhost:8000/api/v1/admin';
 
@@ -90,6 +91,12 @@ const Dashboard = ({ tab }) => {
       {tab === 'drives' && (
         <div style={{ display: 'block' }}>
           <DrivesPanel />
+        </div>
+      )}
+
+      {tab === 'complaints' && (
+        <div style={{ display: 'block' }}>
+          <ComplaintsPanel />
         </div>
       )}
 

@@ -159,3 +159,20 @@ def notify_by_doc_id(doc_id: int) -> dict:
     )
 
     return send_sms(phone_number, message)
+
+
+if __name__ == "__main__":
+    # Internal Test Harness
+    print("── CIVIX-AI: SMS SERVICE TEST HARNESS ──")
+    test_number = "7696138229"  # Standard test number
+    test_msg = "CIVIX-AI: System check. SMS service is active."
+    
+    print(f"Sending test payload to {test_number}...")
+    try:
+        res = send_sms(test_number, test_msg)
+        if res.get("return") == True:
+            print(f"✅ SUCCESS: Message Delivered. ID: {res.get('request_id')}")
+        else:
+            print(f"❌ GATEWAY ERROR: {res}")
+    except Exception as e:
+        print(f"‼ SYSTEM CRITICAL ERROR: {e}")

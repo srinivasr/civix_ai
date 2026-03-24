@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 const LodgeComplaintPanel = ({ boothId }) => {
   const [epic, setEpic] = useState('');
-  const [subject, setSubject] = useState('');
   const [issueType, setIssueType] = useState('Water Supply');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
@@ -45,7 +44,6 @@ const LodgeComplaintPanel = ({ boothId }) => {
           voter_epic: epic,
           phone_number: phone,
           issue_type: issueType,
-          subject: subject,
           description: description
         }),
       });
@@ -55,7 +53,6 @@ const LodgeComplaintPanel = ({ boothId }) => {
       if (response.ok) {
         setMessage({ type: 'success', text: `INCIDENT REPORT #${data.complaint_id} REGISTERED SUCCESSFULLY.` });
         setEpic('');
-        setSubject('');
         setPhone('');
         setDescription('');
       } else {
@@ -209,27 +206,7 @@ const LodgeComplaintPanel = ({ boothId }) => {
               </h3>
             </div>
 
-            <div className="form-group" style={{ marginBottom: '24px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '11px', fontWeight: '900', color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Subject Statement
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="BRIEF SUMMARY OF THE CORE ISSUE"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                style={{ 
-                  width: '100%', 
-                  padding: '14px', 
-                  borderRadius: '0', 
-                  border: '1.5px solid var(--gray-200)', 
-                  fontSize: '15px',
-                  fontWeight: '600',
-                  background: 'var(--gray-50)'
-                }}
-              />
-            </div>
+
 
             <div className="form-group" style={{ marginBottom: '40px' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '11px', fontWeight: '900', color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>

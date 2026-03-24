@@ -141,10 +141,10 @@ def notify_by_doc_id(doc_id: int) -> dict:
     row = df.loc[mask].iloc[0]
 
     phone_number: Optional[str] = (
-        str(row["phone_number"]) if pd.notna(row.get("phone_number")) else None
+        str(row["Contact_no"]) if pd.notna(row.get("Contact_no")) else None
     )
     issue_classification: str = str(
-        row.get("issue_classification", row.get("issue_type", "General"))
+        row.get("Issue_Type", "General")
     )
 
     if not phone_number:

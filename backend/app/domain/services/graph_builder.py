@@ -87,7 +87,8 @@ def process_complaints(df):
         MERGE (i:Issue {complaint_id: $complaint_id})
         SET i.type = $issue_type,
             i.status = $status,
-            i.timestamp = $timestamp
+            i.timestamp = $timestamp,
+            i.booth_id = $booth_id
 
         MERGE (p)-[:REPORTED]->(i)
 
@@ -107,12 +108,13 @@ def process_complaints(df):
         neo4j_client.run_query(
             query,
             {
-                "complaint_id": int(row["complaint_id"]),
-                "epic": str(row["epic"] if "epic" in row else row["voter_epic"]).strip(),
-                "phone_number": str(row["phone_number"]).strip() if "phone_number" in row else "",
-                "issue_type": str(row["issue_type"]).strip(),
-                "timestamp": str(row["timestamp"]).strip(),
-                "status": str(row["status"]).strip(),
+                "complaint_id": int(row.get("complaint_id", 0)),
+                "epic": str(row.get("EPIC", row.get("epic", row.get("voter_epic", "")))).strip(),
+                "phone_number": str(row.get("Contact_no", row.get("phone_number", ""))).strip(),
+                "issue_type": str(row.get("Issue_Type", row.get("issue_type", ""))).strip(),
+                "timestamp": str(row.get("timestamp", "2026-03-24T12:00:00")).strip(),
+                "status": str(row.get("Status", row.get("status", ""))).strip(),
+                "booth_id": str(row.get("booth_id", "UNKNOWN")).strip(),
             },
         )
 

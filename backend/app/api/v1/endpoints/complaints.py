@@ -19,17 +19,15 @@ router = APIRouter()
 UPLOADS_DIR = Path("data/uploads")
 COMPLAINTS_CSV = UPLOADS_DIR / "complaints.csv"
 
-# ── Column schema for the complaints CSV ────────────────────────────────────
 CSV_COLUMNS = [
     "complaint_id",
-    "voter_epic",
-    "phone_number",
-    "issue_type",
-    "issue_classification",
-    "subject",
-    "description",
     "timestamp",
-    "status",
+    "booth_id",
+    "EPIC",
+    "Contact_no",
+    "Issue_Type",
+    "Status",
+    "Description",
 ]
 
 
@@ -38,14 +36,12 @@ class LodgeComplaintRequest(BaseModel):
     voter_epic: str
     phone_number: str
     issue_type: str
-    subject: str
     description: str
 
 
 class LegacyComplaintRequest(BaseModel):
     """Backwards-compatible request shape used by the existing frontend."""
     epic: str
-    subject: str
     issue_type: str
     description: str
 
@@ -91,14 +87,13 @@ async def lodge_complaint_sms(request: LodgeComplaintRequest):
 
         new_row = {
             "complaint_id": next_id,
-            "voter_epic": request.voter_epic,
-            "phone_number": request.phone_number,
-            "issue_type": request.issue_type,
-            "issue_classification": request.issue_type,
-            "subject": request.subject,
-            "description": request.description,
             "timestamp": timestamp,
-            "status": "Open",
+            "booth_id": _get_booth_id_for_epic(request.voter_epic),
+            "EPIC": request.voter_epic,
+            "Contact_no": request.phone_number,
+            "Issue_Type": request.issue_type,
+            "Status": "Open",
+            "Description": request.description,
         }
 
         new_df = pd.concat(
@@ -149,14 +144,13 @@ async def lodge_complaint_legacy(request: LegacyComplaintRequest):
 
         new_row = {
             "complaint_id": next_id,
-            "epic": request.epic,
-            "voter_epic": request.epic,
-            "subject": request.subject,
-            "issue_type": request.issue_type,
-            "issue_classification": request.issue_type,
-            "description": request.description,
             "timestamp": timestamp,
-            "status": "Open",
+            "booth_id": _get_booth_id_for_epic(request.epic),
+            "EPIC": request.epic,
+            "Contact_no": "N/A",  # legacy endpoints do not send contactno
+            "Issue_Type": request.issue_type,
+            "Status": "Open",
+            "Description": request.description,
         }
 
         # Ensure existing CSV has the new columns
@@ -205,7 +199,10 @@ async def resolve_complaint(doc_id: int):
             )
 
         # Update status to Resolved
-        df.loc[mask, "status"] = "Resolved"
+        if "Status" in df.columns:
+            df.loc[mask, "Status"] = "Resolved"
+        elif "status" in df.columns:
+            df.loc[mask, "status"] = "Resolved"
         df.to_csv(COMPLAINTS_CSV, index=False)
 
         # Send the resolution SMS
@@ -240,3 +237,21 @@ def _next_complaint_id(df: pd.DataFrame) -> int:
     if df.empty or "complaint_id" not in df.columns:
         return 1001
     return int(df["complaint_id"].max()) + 1
+
+
+def _get_booth_id_for_epic(epic: str) -> str:
+    """Look up the booth_id for a given EPIC in voters.csv."""
+    try:
+        voters_path = UPLOADS_DIR / "voters.csv"
+        if voters_path.exists():
+            # Use string type for both columns to ensure clean matching
+            vdf = pd.read_csv(voters_path, dtype={"epic": str, "booth_id": str})
+            matches = vdf[vdf["epic"] == epic]
+            if not matches.empty:
+                booth_id = matches.iloc[0]["booth_id"]
+                if not pd.isna(booth_id):
+                    return str(booth_id)
+    except Exception as e:
+        print(f"Error finding booth_id for EPIC {epic}: {e}")
+    return "UNKNOWN"
+

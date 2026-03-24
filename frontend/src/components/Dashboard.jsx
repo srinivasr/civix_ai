@@ -16,8 +16,8 @@ const Dashboard = ({ tab }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchData = async () => {
-    setLoading(true);
+  const fetchData = async (silent = false) => {
+    if (!silent) setLoading(true);
     setError(null);
     try {
       const [o, b, r] = await Promise.all([
@@ -30,16 +30,21 @@ const Dashboard = ({ tab }) => {
       setRecommendations(r);
     } catch (e) {
       console.error(e);
-      setError('Failed to load dashboard data. Is the backend running?');
+      if (!silent) setError('Failed to load dashboard data. Is the backend running?');
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
   useEffect(() => {
+    let intervalId;
     if (tab === 'overview') {
-      fetchData();
+      fetchData(false);
+      intervalId = setInterval(() => {
+        fetchData(true);
+      }, 5000);
     }
+    return () => clearInterval(intervalId);
   }, [tab]);
 
   const badge = (level) => {

@@ -4,15 +4,26 @@ import { DataSet } from 'vis-data';
 
 const API_URL = 'http://localhost:8000/api/v1/ask';
 
-const COLORS = {
-  Voter: { bg: '#dbeafe', border: '#3b82f6' },
-  Booth: { bg: '#fef2f2', border: '#ef4444' },
-  House: { bg: '#f0fdf4', border: '#22c55e' },
-  Complaint: { bg: '#fffbeb', border: '#f59e0b' },
-  Issue: { bg: '#faf5ff', border: '#a855f7' },
-  Default: { bg: '#f4f4f5', border: '#71717a' },
-};
 
+const COLORS = {
+  Person: { bg: '#d9d9d9', border: '#8c8c8c' },
+  Booth: { bg: '#ff4d4f', border: '#cf1322' },
+  House: { bg: '#52c41a', border: '#389e0d' },
+  Area: { bg: '#fa8c16', border: '#d46b08' },
+  Issue: { bg: '#722ed1', border: '#531dab' },
+  Default: { bg: '#999', border: '#666' },
+};
+const getColor = (label) => {
+  switch (label) {
+    case "Booth": return { background: "#ff4d4f", border: "#cf1322" };
+    case "Area": return { background: "#fa8c16", border: "#d46b08" };
+    case "House": return { background: "#52c41a", border: "#389e0d" };
+    case "Family": return { background: "#13c2c2", border: "#08979c" };
+    case "Person": return { background: "#d9d9d9", border: "#8c8c8c" };
+    case "Issue": return { background: "#722ed1", border: "#531dab" };
+    default: return { background: "#999", border: "#666" };
+  }
+};
 const AskPanel = () => {
   const [question, setQuestion] = useState('');
   const [loading, setLoading] = useState(false);
@@ -49,30 +60,29 @@ const AskPanel = () => {
     }
 
     const visNodes = new DataSet(
-      nodes.map(n => {
-        const c = COLORS[n.group] || COLORS.Default;
-        return {
-          id: n.id,
-          label:
-            n.properties?.name ||
-            n.properties?.epic?.toString() ||
-            (n.properties?.house_no ? `House ${n.properties.house_no}` : null) ||
-            n.properties?.booth_id?.toString() ||
-            n.properties?.complaint_id?.toString() ||
-            n.label,
-          title: n.title,
-          color: {
-            background: c.bg,
-            border: c.border,
-            highlight: { background: c.bg, border: c.border },
-          },
-          font: { color: '#18181b', size: 13, face: 'Inter, sans-serif' },
-          shape: 'dot',
-          size: 16,
-          borderWidth: 2,
-        };
-      })
-    );
+nodes.map(n => {
+  const nodeType = n.label;
+  const c = getColor(nodeType);
+
+  return {
+    id: n.id,
+    label:
+      n.properties?.name ||
+      n.properties?.epic?.toString() ||
+      (n.properties?.house_no ? `House ${n.properties.house_no}` : null) ||
+      n.properties?.booth_id?.toString() ||
+      n.properties?.complaint_id?.toString() ||
+      nodeType,
+
+    color: c,
+
+    font: { color: '#18181b', size: 13 },
+    shape: 'dot',
+    size: 16,
+    borderWidth: 2,
+  };
+}))
+    ;
 
     const visEdges = new DataSet(
       edges.map((e, i) => ({
@@ -91,15 +101,17 @@ const AskPanel = () => {
       graphRef.current,
       { nodes: visNodes, edges: visEdges },
       {
-        physics: {
-          forceAtlas2Based: {
-            gravitationalConstant: -30,
-            springLength: 140,
-            springConstant: 0.04,
-          },
-          solver: 'forceAtlas2Based',
-          stabilization: { iterations: 100 },
-        },
+physics: {
+  enabled: true,
+  solver: 'forceAtlas2Based',
+  forceAtlas2Based: {
+    gravitationalConstant: -50,
+    centralGravity: 0.01,
+    springLength: 100,
+    springConstant: 0.08
+  },
+  stabilization: { iterations: 150 }
+},
         interaction: { hover: true, tooltipDelay: 200 },
         edges: { width: 1.5 },
         nodes: { borderWidth: 2 },
@@ -273,5 +285,5 @@ const AskPanel = () => {
   );
 };
 
-export default AskPanel;
 
+export default AskPanel;

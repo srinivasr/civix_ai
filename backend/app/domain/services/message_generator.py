@@ -5,9 +5,20 @@ def generate_booth_messages():
     query = """
     MATCH (b:Booth)
     WHERE b.recommendation IS NOT NULL AND b.recommendation <> "No action required"
-    RETURN b.booth_id AS booth_id, b.recommendation AS recommendation
+
+    OPTIONAL MATCH (b)<-[:IN_BOOTH]-(i:Issue)
+    WITH b, b.recommendation AS recommendation, count(i) AS total_issues,
+         sum(CASE WHEN i.status = "Open" THEN 1 ELSE 0 END) AS open_issues
+
+    RETURN 
+        b.booth_id AS booth_id,
+        recommendation,
+        total_issues,
+        open_issues
     ORDER BY b.booth_id
+    
     """
+
     results = neo4j_client.run_query(query)
     messages = []
 
@@ -25,6 +36,10 @@ def generate_booth_messages():
         rec = row.get("recommendation", "")
         booth_id = row.get("booth_id")
         message = message_map.get(rec, f"Governance action planned: {rec}")
-        messages.append({"booth_id": booth_id, "message": message})
+
+        messages.append({
+            "booth_id": booth_id,
+            "message": message
+        })
 
     return messages

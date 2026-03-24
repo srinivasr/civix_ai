@@ -55,7 +55,7 @@ _RE_NAME_CHARS = re.compile(r"[^a-zA-Z\u0900-\u097F\s\.]")
 _RE_CAMEL = re.compile(r"([a-z])([A-Z])")
 _RE_SPACED_CAPS = re.compile(r"^([A-Z]\s+){3,}")
 _RE_WHITESPACE = re.compile(r"\s+")
-_RE_STATE_FIRST_PAGE = re.compile(r"S\d+\s+([A-Za-z]+)")
+_RE_STATE_FIRST_PAGE = re.compile(r"S\d+\s+([A-Za-z\u0900-\u097F]+)")
 _RE_AC_FIRST_PAGE = re.compile(r"Assembly Constituency.*?(\d+)", re.IGNORECASE)
 _RE_BOOTH_FIRST_PAGE = re.compile(r"Polling Station.*?(\d+)", re.IGNORECASE)
 
@@ -153,21 +153,39 @@ def parse_header(text: str) -> dict:
         "section": _get(_RE_SECTION),
     }
 
-
-def get_state_code(state: str) -> str:
-    """Map state name to two-letter code."""
+def get_state_code(state):
     state = state.lower()
-    if "mahar" in state: return "MH"
-    elif "uttar" in state: return "UP"
-    elif "bihar" in state: return "BR"
-    elif "gujarat" in state: return "GJ"
-    elif "rajasthan" in state: return "RJ"
-    elif "madhya" in state: return "MP"
-    elif "karnataka" in state: return "KA"
-    elif "tamil" in state: return "TN"
-    elif "bengal" in state: return "WB"
-    elif "delhi" in state: return "DL"
-    else: return "XX"
+
+    # English + Hindi matching
+    if "mahar" in state or "महार" in state: return "MH"
+    elif "uttar pradesh" in state or "उत्तर" in state: return "UP"
+    elif "bihar" in state or "बिहार" in state: return "BR"
+    elif "gujarat" in state or "गुजरात" in state: return "GJ"
+    elif "rajasthan" in state or "राजस्थान" in state: return "RJ"
+    elif "madhya" in state or "मध्य" in state: return "MP"
+    elif "karnataka" in state or "कर्नाटक" in state: return "KA"
+    elif "tamil" in state or "तमिल" in state: return "TN"
+    elif "telangana" in state or "तेलंगाना" in state: return "TS"
+    elif "west bengal" in state or "बंगाल" in state: return "WB"
+    elif "kerala" in state or "केरल" in state: return "KL"
+    elif "odisha" in state or "ओडिशा" in state: return "OR"
+    elif "punjab" in state or "पंजाब" in state: return "PB"
+    elif "assam" in state or "असम" in state: return "AS"
+    elif "jharkhand" in state or "झारखंड" in state: return "JH"
+    elif "chhattisgarh" in state or "छत्तीसगढ़" in state: return "CG"
+    elif "haryana" in state or "हरियाणा" in state: return "HR"
+    elif "himachal" in state or "हिमाचल" in state: return "HP"
+    elif "uttarakhand" in state or "उत्तराखंड" in state: return "UK"
+    elif "goa" in state or "गोवा" in state: return "GA"
+    elif "tripura" in state or "त्रिपुरा" in state: return "TR"
+    elif "manipur" in state or "मणिपुर" in state: return "MN"
+    elif "meghalaya" in state or "मेघालय" in state: return "ML"
+    elif "mizoram" in state or "मिजोरम" in state: return "MZ"
+    elif "nagaland" in state or "नागालैंड" in state: return "NL"
+    elif "sikkim" in state or "सिक्किम" in state: return "SK"
+    elif "arunachal" in state or "अरुणाचल" in state: return "AR"
+
+    return "XX"
 
 
 def extract_first_page_data(bgr: np.ndarray) -> dict:
@@ -175,7 +193,7 @@ def extract_first_page_data(bgr: np.ndarray) -> dict:
     gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
     gray = cv2.resize(gray, None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)
     
-    text = pytesseract.image_to_string(gray, lang="eng", config="--psm 6")
+    text = pytesseract.image_to_string(gray, lang="eng+hin", config="--psm 6")
     text = text.replace("\n", " ")
     text = _RE_WHITESPACE.sub(" ", text)
     

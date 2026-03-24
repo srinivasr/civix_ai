@@ -48,8 +48,8 @@ const Dashboard = ({ tab }) => {
   };
 
   const hasComplaints = overview?.total_complaints > 0;
-  const resolutionRate = hasComplaints 
-    ? ((1 - (overview.avg_open_ratio ?? 0)) * 100).toFixed(0) 
+  const resolutionRate = hasComplaints
+    ? ((1 - (overview.avg_open_ratio ?? 0)) * 100).toFixed(0)
     : '—';
 
   return (

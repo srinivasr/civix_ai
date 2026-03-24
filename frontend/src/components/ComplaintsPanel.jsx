@@ -52,7 +52,7 @@ const ComplaintsPanel = () => {
     return (
         <div style={{ padding: '40px', backgroundColor: surface, minHeight: '100%', fontFamily: '"Public Sans", "Inter", sans-serif' }}>
             <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-                
+
                 <header style={{ borderLeft: `6px solid ${navy}`, paddingLeft: '24px', marginBottom: '8px' }}>
                     <h2 style={{ fontSize: '10px', fontWeight: '900', color: gray400, letterSpacing: '0.4em', textTransform: 'uppercase', marginBottom: '8px' }}>
                         Intelligence Registry
@@ -63,8 +63,8 @@ const ComplaintsPanel = () => {
                 </header>
 
                 {message && (
-                    <div style={{ 
-                        padding: '16px 24px', 
+                    <div style={{
+                        padding: '16px 24px',
                         backgroundColor: message.type === 'success' ? '#f0fdf4' : '#fef2f2',
                         borderLeft: `4px solid ${message.type === 'success' ? '#22c55e' : '#ef4444'}`,
                         color: message.type === 'success' ? '#166534' : '#991b1b',
@@ -100,7 +100,7 @@ const ComplaintsPanel = () => {
                                             <td style={{ padding: '20px', fontWeight: '700', color: gray600, fontFamily: 'monospace' }}>{c.voter_epic || c.epic}</td>
                                             <td style={{ padding: '20px', fontWeight: '700', color: gray600 }}>{c.phone_number || 'N/A'}</td>
                                             <td style={{ padding: '20px' }}>
-                                                <span style={{ 
+                                                <span style={{
                                                     fontSize: '9px', fontWeight: '900', padding: '4px 8px', backgroundColor: '#f0f9ff',
                                                     color: '#0369a1', border: `1px solid #bae6fd`, textTransform: 'uppercase'
                                                 }}>
@@ -116,10 +116,10 @@ const ComplaintsPanel = () => {
                                             <td style={{ padding: '20px', color: gray600, fontWeight: '500' }}>{c.subject}</td>
                                             <td style={{ padding: '20px' }}>
                                                 {c.status === 'Open' && (
-                                                    <button 
+                                                    <button
                                                         onClick={() => handleResolve(c.complaint_id)}
-                                                        style={{ 
-                                                            backgroundColor: navy, color: white, padding: '8px 16px', border: 'none', 
+                                                        style={{
+                                                            backgroundColor: navy, color: white, padding: '8px 16px', border: 'none',
                                                             fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', cursor: 'pointer',
                                                             letterSpacing: '0.1em'
                                                         }}

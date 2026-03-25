@@ -4,6 +4,7 @@ import LodgeComplaintPanel from './components/LodgeComplaintPanel';
 import LoginPage from './components/LoginPage';
 import logo from './assets/logo.png';
 import './index.css';
+import { useAuth } from './contexts/AuthContext';
 
 const NAV_ITEMS = [
   {
@@ -114,27 +115,33 @@ const PAGE_TITLES = {
 };
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { currentUser, logout } = useAuth();
+  const isLoggedIn = !!currentUser;
+  
+  // Extract role from the newly structured displayName or fallback
+  const userRole = currentUser?.displayName || 'official'; // 'booth' or 'official'
+  
+  // Extract booth ID or official ID from email if role is booth
+  // Format: booth_{BoothID}@innovateindia.gov or official_{GovID}@innovateindia.gov
+  const userIdFromEmail = currentUser?.email ? currentUser.email.split('@')[0].split('_')[1] : null;
+
   const [tab, setTab] = useState('overview');
-  const [userRole, setUserRole] = useState('official'); // 'official' or 'voter'
-  const [boothId, setBoothId] = useState(null);
+  const boothId = userRole === 'booth' ? userIdFromEmail : null;
+  const officialId = userRole === 'official' ? userIdFromEmail : null;
+
   const [expanded] = useState(true);
 
-  const handleLogin = (type, bId) => {
-    setIsLoggedIn(true);
-    setUserRole(type === 'booth' ? 'voter' : 'official');
-    setBoothId(bId);
-    setTab('overview');
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setTab('overview');
-    setBoothId(null);
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setTab('overview');
+    } catch (error) {
+      console.error("Failed to log out", error);
+    }
   };
 
   if (!isLoggedIn) {
-    return <LoginPage onLogin={handleLogin} />;
+    return <LoginPage />;
   }
 
   return (
@@ -193,7 +200,7 @@ function App() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 24px', background: 'var(--blue-700)', borderTop: '1px solid rgba(255,255,255,0.05)', margin: '0 -12px' }}>
               <div style={{ width: 8, height: 8, background: 'var(--amber-500)', borderRadius: 0 }} />
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: 9, fontWeight: 800, color: 'var(--white)', letterSpacing: '0.08em' }}>OFFICIAL_04</span>
+                <span style={{ fontSize: 9, fontWeight: 800, color: 'var(--white)', letterSpacing: '0.08em' }}>{officialId || 'OFFICIAL'}</span>
                 <span style={{ fontSize: 8, color: 'var(--blue-100)', letterSpacing: '0.1em', opacity: 0.8 }}>AUTHORIZED ACCESS</span>
               </div>
             </div>
@@ -205,7 +212,7 @@ function App() {
       <div className="main" style={{
         marginLeft: userRole === 'official' ? '' : '0',
         width: userRole === 'official' ? '' : '100%',
-        background: userRole === 'voter' ? 'var(--bg)' : 'white'
+        background: userRole === 'booth' ? 'var(--bg)' : 'white'
       }}>
         {userRole === 'official' && (
           <header className="header">
@@ -213,15 +220,15 @@ function App() {
             <div className="header-right">
               <div style={{ marginRight: 15, textAlign: 'right', display: 'flex', flexDirection: 'column' }}>
                 <span style={{ fontSize: 10, fontWeight: 800, opacity: 0.7 }}>ADMIN_PORTAL</span>
-                <span style={{ fontSize: 9, opacity: 0.5 }}>OFFICIAL_ACCESS</span>
+                <span style={{ fontSize: 9, opacity: 0.5 }}>{officialId || 'OFFICIAL_ACCESS'}</span>
               </div>
               <div className="avatar">A</div>
             </div>
           </header>
         )}
 
-        {/* Voter Header with Logout */}
-        {userRole === 'voter' && (
+        {/* Booth Header with Logout */}
+        {userRole === 'booth' && (
           <div style={{
             padding: '12px 40px',
             background: 'white',
@@ -250,7 +257,7 @@ function App() {
           </div>
         )}
 
-        <div className="content" style={{ padding: userRole === 'voter' ? '0' : '28px 32px' }}>
+        <div className="content" style={{ padding: userRole === 'booth' ? '0' : '28px 32px' }}>
           {userRole === 'official' ? (
             <OverviewPanel tab={tab} setTab={setTab} />
           ) : (

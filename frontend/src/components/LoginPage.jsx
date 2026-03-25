@@ -4,29 +4,59 @@ import {
     ArrowRight, Globe, BadgeCheck
 } from 'lucide-react';
 import logo from '../assets/logo.png';
+import { useAuth } from '../contexts/AuthContext';
 
-export default function LoginPage({ onLogin }) {
+export default function LoginPage() {
     const [view, setView] = useState('login'); // 'signup' or 'login'
     const [userType, setUserType] = useState('booth'); // 'booth' or 'official'
 
     const navy = "#0f172a";
-    const navyDark = "#020617";
     const gold = "#D4AF37";
     const slate400 = "#94a3b8";
     const slate500 = "#64748b";
     const slate50 = "#f8fafc";
     const slate100 = "#f1f5f9";
     const slate200 = "#e2e8f0";
-    const slate300 = "#cbd5e1";
     const white = "#ffffff";
 
     const [boothIdInput, setBoothIdInput] = useState('');
     const [nameInput, setNameInput] = useState('');
     const [passwordInput, setPasswordInput] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const { login, signup } = useAuth();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        onLogin(userType, boothIdInput);
+        setError('');
+        setLoading(true);
+
+        const email = userType === 'booth'
+            ? `booth_${boothIdInput}@innovateindia.gov`
+            : `official_${nameInput}@innovateindia.gov`;
+
+        try {
+            if (view === 'login') {
+                await login(email, passwordInput);
+            } else {
+                const metadata = userType === 'booth'
+                    ? { name: nameInput }
+                    : { department: 'System Default' };
+                await signup(email, passwordInput, userType, metadata);
+            }
+        } catch (err) {
+            console.error(err);
+            if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential' || err.code === 'auth/invalid-email') {
+                setError('Account not found or invalid credentials. Please register your access first.');
+            } else if (err.code === 'auth/email-already-in-use') {
+                setError('This ID is already registered. Please sign in instead.');
+            } else if (err.code === 'auth/weak-password') {
+                setError('Password is too weak. It must be at least 6 characters long.');
+            } else {
+                setError(`Authentication failed: ${err.message || 'Please verify your details.'}`);
+            }
+        }
+        setLoading(false);
     };
 
     return (
@@ -162,6 +192,12 @@ export default function LoginPage({ onLogin }) {
                         </button>
                     </div>
 
+                    {error && (
+                        <div style={{ backgroundColor: '#fee2e2', color: '#b91c1c', padding: '12px 16px', borderRadius: '12px', marginBottom: '24px', fontSize: '11px', fontWeight: 700, border: '1px solid #fca5a5' }}>
+                            {error}
+                        </div>
+                    )}
+
                     <form style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} onSubmit={handleSubmit}>
                         {view === 'signup' && (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -187,9 +223,9 @@ export default function LoginPage({ onLogin }) {
                                 <FlatField label="Password" icon={<Lock size={16} />} placeholder="••••••••" type="password" value={passwordInput} onChange={setPasswordInput} />
                                 <FlatField label="Confirm Password" icon={<Lock size={16} />} placeholder="••••••••" type="password" />
 
-                                <button type="submit" style={{
+                                <button type="submit" disabled={loading} style={{
                                     width: '100%',
-                                    backgroundColor: navy,
+                                    backgroundColor: loading ? slate400 : navy,
                                     color: white,
                                     padding: '16px',
                                     marginTop: '16px',
@@ -203,10 +239,10 @@ export default function LoginPage({ onLogin }) {
                                     justifyContent: 'center',
                                     gap: '12px',
                                     border: 'none',
-                                    cursor: 'pointer',
-                                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                                    cursor: loading ? 'not-allowed' : 'pointer',
+                                    boxShadow: loading ? 'none' : '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
                                 }}>
-                                    {userType === 'booth' ? 'Register Booth' : 'Register Official'} <ArrowRight size={16} color={gold} />
+                                    {loading ? 'Processing...' : (userType === 'booth' ? 'Register Booth' : 'Register Official')} {!loading && <ArrowRight size={16} color={gold} />}
                                 </button>
                             </div>
                         )}
@@ -223,9 +259,9 @@ export default function LoginPage({ onLogin }) {
                                 )}
                                 <FlatField label="Password" icon={<Lock size={16} />} placeholder="••••••••" type="password" value={passwordInput} onChange={setPasswordInput} />
 
-                                <button type="submit" style={{
+                                <button type="submit" disabled={loading} style={{
                                     width: '100%',
-                                    backgroundColor: navy,
+                                    backgroundColor: loading ? slate400 : navy,
                                     color: white,
                                     padding: '16px',
                                     marginTop: '32px',
@@ -239,9 +275,10 @@ export default function LoginPage({ onLogin }) {
                                     justifyContent: 'center',
                                     gap: '12px',
                                     border: 'none',
-                                    cursor: 'pointer'
+                                    cursor: loading ? 'not-allowed' : 'pointer',
+                                    transition: 'all 0.2s ease'
                                 }}>
-                                    Authorize Login <ArrowRight size={16} color={gold} />
+                                    {loading ? 'Authorizing...' : 'Authorize Login'} {!loading && <ArrowRight size={16} color={gold} />}
                                 </button>
                             </div>
                         )}

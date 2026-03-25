@@ -13,6 +13,9 @@ const COLORS = {
   Issue: { bg: '#722ed1', border: '#531dab' },
   Default: { bg: '#999', border: '#666' },
 };
+
+
+
 const getColor = (label) => {
   switch (label) {
     case "Booth": return { background: "#ff4d4f", border: "#cf1322" };
@@ -25,6 +28,7 @@ const getColor = (label) => {
   }
 };
 const AskPanel = () => {
+  const [selectedNode, setSelectedNode] = useState(null);
   const [question, setQuestion] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -64,23 +68,23 @@ nodes.map(n => {
   const nodeType = n.label;
   const c = getColor(nodeType);
 
-  return {
-    id: n.id,
-    label:
-      n.properties?.name ||
-      n.properties?.epic?.toString() ||
-      (n.properties?.house_no ? `House ${n.properties.house_no}` : null) ||
-      n.properties?.booth_id?.toString() ||
-      n.properties?.complaint_id?.toString() ||
-      nodeType,
+return {
+  id: n.id,
+  label:
+    n.properties?.name ||
+    n.properties?.epic?.toString() ||
+    (n.properties?.house_no ? `House ${n.properties.house_no}` : null) ||
+    n.properties?.booth_id?.toString() ||
+    n.properties?.complaint_id?.toString() ||
+    nodeType,
 
-    color: c,
-
-    font: { color: '#18181b', size: 13 },
-    shape: 'dot',
-    size: 16,
-    borderWidth: 2,
-  };
+  color: c,
+  raw: n, // 🔥 ADD THIS
+  font: { color: '#18181b', size: 13 },
+  shape: 'dot',
+  size: 16,
+  borderWidth: 2,
+};
 }))
     ;
 
@@ -117,6 +121,14 @@ physics: {
         nodes: { borderWidth: 2 },
       }
     );
+  networkRef.current.on("click", function (params) {
+  if (params.nodes.length > 0) {
+    const nodeId = params.nodes[0];
+    const node = visNodes.get(nodeId);
+
+    setSelectedNode(node.raw);
+  }
+});
 
     return () => {
       if (networkRef.current) {
@@ -135,7 +147,10 @@ physics: {
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: question.trim() }),
+        body: JSON.stringify({
+           question: question.trim(),
+           shortcut: null
+           }),
       });
       if (!res.ok) {
         const e = await res.json().catch(() => ({}));
@@ -148,6 +163,31 @@ physics: {
       setLoading(false);
     }
   };
+  const handleQuickQuery = async (shortcut) => {
+  setLoading(true);
+  setError(null);
+  setResult(null);
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question:null,
+        shortcut:shortcut
+
+         }), 
+    });
+
+    if (!res.ok) throw new Error("Error");
+
+    setResult(await res.json());
+  } catch (e) {
+    setError(e.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const columns = result?.data?.length ? Object.keys(result.data[0]) : [];
 
@@ -176,6 +216,35 @@ physics: {
           {loading ? 'Thinking…' : 'Ask'}
         </button>
       </div>
+      {/* 🔥 QUICK ACCESS PANEL */}
+<div className="quick-panel-container">
+  <div className="quick-header">⚡ Quick Insights</div>
+
+  
+
+  <div className="quick-scroll">
+    {[
+      { label: "Show all relationships", key: "SHOW_ALL_RELATIONSHIPS" },
+      { label: "List all voters", key: "LIST_ALL_VOTERS" },
+      { label: "List all sections", key: "list_section" },
+      { label: "Show all houses", key: "LIST_HOUSES" },
+      { label: "Female Voters", key: "HOUSE_MEMBERS" },
+      { label: "Senior citizens", key: "SENIOR_VOTERS" },
+      { label: "Youth voters", key: "YOUTH_VOTERS" },
+      { label: "Voters by issue", key: "VOTERS_BY_ISSUE" },
+      { label: "Area relationships", key: "AREA_RELATIONS" },
+      { label: "Full network graph", key: "FULL_GRAPH" },
+    ].map((q, i) => (
+      <button
+        key={i}
+        onClick={() => handleQuickQuery(q.key)}
+        className="quick-chip"
+      >
+        {q.label}
+      </button>
+    ))}
+  </div>
+</div>
 
       {/* ── Loading ── */}
       {loading && (
@@ -209,75 +278,74 @@ physics: {
             <p>{result.answer}</p>
           </div>
 
-          <div className="grid-2col" style={{ marginBottom: 24 }}>
+          <div style={{ marginBottom: 24 }}>
             {/* Left: Cypher + Graph */}
             <div>
               <div className="cypher-block">
                 <h4>Cypher Query</h4>
                 <pre>{result.cypher}</pre>
               </div>
+            {result.graph?.nodes?.length > 0 ? (
+  <div>
+    <div className={`graph-wrapper ${isFullScreen ? 'fullscreen' : ''}`}>
+      <button 
+        className="fullscreen-btn" 
+        onClick={toggleFullScreen}
+        title={isFullScreen ? "Minimize" : "Maximize"}
+      >
+        {isFullScreen ? (
+          <>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 14, height: 14 }}>
+              <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+            </svg>
+            <span style={{ marginLeft: 6, fontWeight: 700, fontSize: 13 }}>
+              Minimize View
+            </span>
+          </>
+        ) : (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+          </svg>
+        )}
+      </button>
 
-              {result.graph?.nodes?.length > 0 ? (
-                <div className={`graph-wrapper ${isFullScreen ? 'fullscreen' : ''}`}>
-                  <button 
-                    className="fullscreen-btn" 
-                    onClick={toggleFullScreen}
-                    title={isFullScreen ? "Minimize" : "Maximize"}
-                  >
-                    {isFullScreen ? (
-                      <>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 14, height: 14 }}>
-                          <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
-                        </svg>
-                        <span style={{ marginLeft: 6, fontWeight: 700, fontSize: 13 }}>Minimize View</span>
-                      </>
-                    ) : (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-                      </svg>
-                    )}
-                  </button>
-                  <div className="graph-container" ref={graphRef} />
-                </div>
-              ) : (
-                <div className="card">
-                  <div className="empty-state" style={{ height: 180 }}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="8" y1="12" x2="16" y2="12" />
-                    </svg>
-                    <p>No graph data for this query</p>
-                  </div>
-                </div>
-              )}
+      <div 
+  className="graph-container" 
+  ref={graphRef} 
+    
+/>
+    </div>
+
+    {/* 🔥 NODE DETAILS */}
+    {selectedNode && (
+      <div className="card" style={{ marginTop: 16 }}>
+        <h2>Node Details</h2>
+        <pre style={{ fontSize: 12 }}>
+          {JSON.stringify(selectedNode.properties, null, 2)}
+        </pre>
+      </div>
+    )}
+  </div>
+) : (
+  <div className="card">
+    <div className="empty-state" style={{ height: 180 }}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="8" y1="12" x2="16" y2="12" />
+      </svg>
+      <p>No graph data for this query</p>
+    </div>
+  </div>
+)}
+
+              
+
+                
+
+
             </div>
 
-            {/* Right: Data Table */}
-            {result.data?.length > 0 && (
-              <div className="card">
-                <h3>Results ({result.data.length} rows)</h3>
-                <div style={{ overflowX: 'auto' }}>
-                  <table>
-                    <thead>
-                      <tr>{columns.map(c => <th key={c}>{c}</th>)}</tr>
-                    </thead>
-                    <tbody>
-                      {result.data.map((row, i) => (
-                        <tr key={i}>
-                          {columns.map(c => (
-                            <td key={c}>
-                              {typeof row[c] === 'object'
-                                ? JSON.stringify(row[c])
-                                : String(row[c] ?? '')}
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
+
           </div>
         </>
       )}

@@ -76,14 +76,27 @@ def process_voters(df):
 
 
 def process_complaints(df):
+    df.columns = df.columns.str.lower().str.strip()
+
     count = 0
 
     for _, row in df.iterrows():
+
+        epic = str(row.get("epic") or row.get("voter_epic") or "").strip()
+        phone = str(row.get("contact_no") or row.get("phone_number") or "").strip()
+        issue_type = str(row.get("issue_type") or "").strip()
+        status = str(row.get("status") or "").strip()
+        timestamp = str(row.get("timestamp") or "").strip()
+
+        if not epic:
+            continue
+
         query = """
         MATCH (p:Person {epic_id: $epic})
         WITH p
         WHERE p IS NOT NULL
         SET p.phone_number = $phone_number
+
         MERGE (i:Issue {complaint_id: $complaint_id})
         SET i.type = $issue_type,
             i.status = $status,

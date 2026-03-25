@@ -42,11 +42,11 @@ const LodgeComplaintPanel = ({ boothId }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          voter_epic: epic,
-          phone_number: phone,
+          booth_id: boothId || "MH_201_003",
+          epic: epic,
+          contact_no: phone,
           issue_type: issueType,
-          description: description,
-          booth_id: boothId || ''
+          description: description
         }),
       });
 
@@ -207,8 +207,6 @@ const LodgeComplaintPanel = ({ boothId }) => {
                 Incident Details
               </h3>
             </div>
-
-
 
             <div className="form-group" style={{ marginBottom: '40px' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '11px', fontWeight: '900', color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>

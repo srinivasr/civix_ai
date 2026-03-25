@@ -787,9 +787,53 @@ tbody tr:nth-child(odd) {
   background: var(--white);
   border: 1px solid var(--gray-100);
   border-radius: var(--radius-xl);
-  height: 420px;
+  height: 1000px;
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+}
+/* ===== QUICK PANEL ===== */
+
+.quick-panel-container {
+  margin-top: 12px;
+  margin-bottom: 30px;
+  padding: 12px;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.quick-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: #71717a;
+  margin-bottom: 8px;
+}
+
+.quick-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.quick-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.quick-chip {
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #e4e4e7;
+  background: #ffffff;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-chip:hover {
+  background: #f4f4f5;
+  border-color: #d4d4d8;
 }
 
 /* ═══════════════════════════════════════════

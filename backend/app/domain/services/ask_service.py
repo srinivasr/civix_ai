@@ -2,6 +2,7 @@ import re
 from app.infrastructure.ai.ollama_client import ollama_client
 from app.infrastructure.db.neo4j_client import neo4j_client
 
+
 # Cypher keywords that indicate a write/destructive operation
 BLOCKED_KEYWORDS = re.compile(
     r"\b(DELETE|CREATE|MERGE|SET|REMOVE|DROP|DETACH)\b",
@@ -9,60 +10,73 @@ BLOCKED_KEYWORDS = re.compile(
 )
 
 
-def ask_question(question: str) -> dict:
-    """Full pipeline: question → schema → Cypher → safety → execute → graph + answer."""
-
-    # 1. Fetch the live schema from Neo4j
-    db_schema = neo4j_client.get_schema()
-
-    custom_schema = """
-You are a Neo4j Cypher generator.
-
-STRICT RULES:
-
-- The term "voter" refers to ALL Person nodes
-- DO NOT filter using p.category = 'voter'
-- "voter" is NOT a category — it means Person
-
-- NEVER generate:
-  p.category = 'voter'
-
-- ALWAYS interpret:
-  "voters" → Person nodes
-
-- Use ONLY:
-  Person, Issue, Booth, Area, House, Family
-
-Graph Schema:
-
-Nodes:
-- Booth (booth_id, complaint_count, open_count, resolved_count)
-- Area (name)
-- House (house_no)
-- 
-- Person (epic_id, name, age, gender, category)
-- Issue (complaint_id, type, status, timestamp)
-
-Relationships:
-- Booth -[:HAS_AREA]-> Area
-- Area -[:HAS_HOUSE]-> House
 
 
-- Person -[:REPORTED]-> Issue
-- Issue -[:BELONGS_TO]-> House
-- Issue -[:LOCATED_IN]-> Area
-- Issue -[:IN_BOOTH]-> Booth
+def ask_question(question=None, shortcut=None):
+    from app.api.v1.endpoints.ask import PREDEFINED_QUERIES
 
-Rules:
-- Use ONLY MATCH and RETURN
-- Do NOT use CREATE, DELETE, MERGE, SET
-- Return ONLY Cypher query
-"""
 
-    schema = custom_schema + "\n\n" + db_schema
+    # 🔥 STEP 1: shortcut direct
+    if shortcut and shortcut in PREDEFINED_QUERIES:
+        cypher = PREDEFINED_QUERIES[shortcut]
+
+    else:
+        db_schema = neo4j_client.get_schema()
+        custom_schema = """
+            You are a Neo4j Cypher generator.
+
+            STRICT RULES:
+
+            - The term "voter" refers to ALL Person nodes
+            - DO NOT filter using p.category = 'voter'
+            - "voter" is NOT a category — it means Person
+
+            - NEVER generate:
+            p.category = 'voter'
+
+            - ALWAYS interpret:
+            "voters" → Person nodes
+
+            - Use ONLY:
+            Person, Issue, Booth, Area, House, Family
+
+            Graph Schema:
+
+            Nodes:
+            - Booth (booth_id, complaint_count, open_count, resolved_count)
+            - Area (name)
+            - House (house_no)
+            - 
+            - Person (epic_id, name, age, gender, category)
+            - Issue (complaint_id, type, status, timestamp)
+
+            Relationships:
+            - Booth -[:HAS_AREA]-> Area
+            - Area -[:HAS_HOUSE]-> House
+
+
+            - Person -[:REPORTED]-> Issue
+            - Issue -[:BELONGS_TO]-> House
+            - Issue -[:LOCATED_IN]-> Area
+            - Issue -[:IN_BOOTH]-> Booth
+
+            Rules:
+            - Use ONLY MATCH and RETURN
+            - Do NOT use CREATE, DELETE, MERGE, SET
+            - Return ONLY Cypher query
+            """
+        schema = custom_schema + "\n\n" + db_schema
 
     # 2. Generate Cypher
-    cypher = ollama_client.generate_cypher(schema, question)
+    
+
+        output = ollama_client.generate_cypher(schema, question)
+
+        # 🔥 STEP 2: model shortcut
+        if output in PREDEFINED_QUERIES:
+            cypher = PREDEFINED_QUERIES[output]
+        else:
+            cypher = output
 
     # 🔥 3. AUTO-CORRECT (CRITICAL FIX)
     cypher = cypher.replace("Voter", "Person")
@@ -101,7 +115,11 @@ Rules:
 
     # 7. Generate answer
     try:
-        answer = ollama_client.summarize_results(question, cypher, data)
+        answer = ollama_client.summarize_results(
+        question or shortcut,
+        cypher,
+        data
+)
     except Exception as e:
         answer = f"Query executed but summary failed: {str(e)}"
 

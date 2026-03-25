@@ -28,14 +28,15 @@ CSV_COLUMNS = [
     "Contact_no",
     "Issue_Type",
     "Status",
-    "Description",
+    "Description"
 ]
 
 
 # ── Request Models ──────────────────────────────────────────────────────────
 class LodgeComplaintRequest(BaseModel):
-    voter_epic: str
-    phone_number: str
+    booth_id: str
+    epic: str
+    contact_no: str
     issue_type: str
     description: str
     booth_id: str = ""
@@ -43,6 +44,7 @@ class LodgeComplaintRequest(BaseModel):
 
 class LegacyComplaintRequest(BaseModel):
     """Backwards-compatible request shape used by the existing frontend."""
+    booth_id: str = ""
     epic: str
     issue_type: str
     description: str
@@ -97,9 +99,9 @@ async def lodge_complaint_sms(request: LodgeComplaintRequest):
         new_row = {
             "complaint_id": next_id,
             "timestamp": timestamp,
-            "booth_id": request.booth_id if request.booth_id else _get_booth_id_for_epic(request.voter_epic),
-            "EPIC": request.voter_epic,
-            "Contact_no": request.phone_number,
+            "booth_id": request.booth_id if request.booth_id else _get_booth_id_for_epic(request.epic),
+            "EPIC": request.epic,
+            "Contact_no": request.contact_no,
             "Issue_Type": request.issue_type,
             "Status": "Open",
             "Description": request.description,
@@ -123,7 +125,7 @@ async def lodge_complaint_sms(request: LodgeComplaintRequest):
             f"'{request.issue_type}' has been REGISTERED successfully. "
             f"We will keep you updated. - Govt Secretariat"
         )
-        sms_result = send_sms(request.phone_number, sms_message)
+        sms_result = send_sms(request.contact_no, sms_message)
 
         return {
             "status": "success",
@@ -160,9 +162,9 @@ async def lodge_complaint_legacy(request: LegacyComplaintRequest):
         new_row = {
             "complaint_id": next_id,
             "timestamp": timestamp,
-            "booth_id": _get_booth_id_for_epic(request.epic),
+            "booth_id": request.booth_id if request.booth_id else _get_booth_id_for_epic(request.epic),
             "EPIC": request.epic,
-            "Contact_no": "N/A",  # legacy endpoints do not send contactno
+            "Contact_no": "N/A",
             "Issue_Type": request.issue_type,
             "Status": "Open",
             "Description": request.description,

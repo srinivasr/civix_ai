@@ -10,6 +10,7 @@ router = APIRouter()
 
 COMPLAINTS_CSV = Path("data/uploads/complaints.csv")
 VOTERS_CSV = Path("data/uploads/voters.csv")
+SCHEME_VOTERS_CSV = Path("data/uploads/fake_scheme_voters.csv")
 
 
 @router.get("/overview")
@@ -172,10 +173,10 @@ def get_all_drives():
 
 @router.get("/voters/filter")
 def filter_voters(category: str):
-    if not VOTERS_CSV.exists():
+    if not SCHEME_VOTERS_CSV.exists():
         return []
     try:
-        df = pd.read_csv(VOTERS_CSV)
+        df = pd.read_csv(SCHEME_VOTERS_CSV)
         cols = {c.lower(): c for c in df.columns}
         
         age_col = cols.get("age", "Age")
@@ -209,18 +210,18 @@ class SchemeSmsRequest(BaseModel):
 
 @router.post("/schemes/send_sms")
 def send_scheme_sms(req: SchemeSmsRequest):
-    if not VOTERS_CSV.exists():
+    if not SCHEME_VOTERS_CSV.exists():
         raise HTTPException(status_code=404, detail="Voters CSV not found")
     
     from app.infrastructure.sms_service import send_sms
     
     try:
-        df = pd.read_csv(VOTERS_CSV)
+        df = pd.read_csv(SCHEME_VOTERS_CSV)
         cols = {c.lower(): c for c in df.columns}
         
         age_col = cols.get("age", "Age")
         gender_col = cols.get("gender", "Gender")
-        phone_col = cols.get("phone", cols.get("contact_no", "Phone"))
+        phone_col = cols.get("numbers", cols.get("phone", cols.get("contact_no", "Numbers")))
         
         if age_col not in df.columns: df[age_col] = 0
         if gender_col not in df.columns: df[gender_col] = ""

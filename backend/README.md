@@ -1,6 +1,6 @@
-# Civix AI - Backend
+# AAkar - Backend
 
-The robust Python-based backend for **Civix AI**. It connects to a **Neo4j Knowledge Graph**, exposes RESTful APIs using **FastAPI**, processes PDF voter lists via highly-optimised **OCR pipelines**, and effortlessly translates natural language into secure Cypher queries using **Ollama**.
+The robust Python-based backend for **AAkar**. It connects to a **Neo4j Knowledge Graph**, exposes RESTful APIs using **FastAPI**, processes PDF voter lists via highly-optimised **OCR pipelines**, and effortlessly translates natural language into secure Cypher queries using **Ollama**.
 
 ---
 

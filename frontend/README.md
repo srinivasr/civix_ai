@@ -1,6 +1,6 @@
-# Civix AI - Frontend
+# AAkar - Frontend
 
-The presentation layer of **Civix AI**. Built with speed, reactivity, and a premium aesthetic in mind. It uses a modern glassmorphic design system and integrates interactive network structures to represent the Knowledge Graph natively in the browser.
+The presentation layer of **AAkar**. Built with speed, reactivity, and a premium aesthetic in mind. It uses a modern glassmorphic design system and integrates interactive network structures to represent the Knowledge Graph natively in the browser.
 
 ---
 
@@ -67,7 +67,7 @@ The frontend will be instantly accessible, normally at: `http://localhost:5173`
 
 ## Design Principles
 
-The UI of Civix AI is built around the concept of a **Living Dashboard**:
+The UI of AAkar is built around the concept of a **Living Dashboard**:
 - **Premium Aesthetics**: Deep, carefully curated custom dark palettes combined with vibrant, purposeful accent colors (e.g., Amber for high-risk zones, Blue for active connections).
 - **Glassmorphism Integration**: Floating panels and transparent CSS blurs that bring the interactive Knowledge Graph to the forefront without clutter.
 - **Dynamic Interaction**: Utilizes `vis-network` to allow users to physically drag, zoom, and explore node connections within the civic dataset.

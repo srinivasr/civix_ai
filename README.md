@@ -1,6 +1,6 @@
 <div align="center">
   
-# Civix AI
+# AAkar
 **AI-Powered Booth Civic Intelligence Platform**
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
@@ -19,9 +19,9 @@ Transforming static civic data into a **predictive, booth-level Living Knowledge
 
 ## Overview
 
-**Civix AI** is an advanced Civic Intelligence Platform engineered to modernize how local governments and civic leaders understand, predict, and respond to community needs. By aggregating flat datasets regarding voters and localized complaints, Civix AI constructs a highly interconnected **Knowledge Graph**. 
+**AAkar** is an advanced Civic Intelligence Platform engineered to modernize how local governments and civic leaders understand, predict, and respond to community needs. By aggregating flat datasets regarding voters and localized complaints, AAkar constructs a highly interconnected **Knowledge Graph**. 
 
-Moving beyond traditional reactive complaint management, Civix AI empowers decision-makers with:
+Moving beyond traditional reactive complaint management, AAkar empowers decision-makers with:
 
 - **Booth-level Risk Prediction**: Anticipate issues before they escalate.
 - **Structural Community Detection**: Understand hidden relationships within civic data.
@@ -127,7 +127,7 @@ npm run dev
 
 ## Ethical Design & Safety
 
-Civix AI strictly enforces data privacy and ethical AI usage:
+AAkar strictly enforces data privacy and ethical AI usage:
 
 - **No Personal Profiling**: Data is anonymized and strictly aggregated at the booth or ward level.
 - **No Mutating AI Queries**: The LLM prompt injection barriers are tightly scoped to completely block any commands that attempt to alter or destroy graph data.

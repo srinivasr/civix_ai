@@ -2,31 +2,15 @@ import React, { useState, useEffect } from 'react';
 
 const API_BASE = 'http://localhost:8000/api/v1';
 
-// Stitch Design Tokens
-const tokens = {
-    colors: {
-        background: '#f3faff',
-        surface: '#ffffff',
-        surfaceLow: '#e6f6ff',
-        surfaceHigh: '#d5ecf8',
-        surfaceHighest: '#cfe6f2',
-        primary: '#000666',
-        primaryContainer: '#1a237e',
-        onSurface: '#071e27',
-        onSurfaceVariant: '#454652',
-        outlineVariant: 'rgba(198, 197, 212, 0.15)',
-        success: '#22c55e',
-        successBg: '#f0fdf4',
-        warning: '#d97706',
-        warningBg: '#fffbeb',
-    },
-    shadows: {
-        ambient: '0 8px 24px rgba(7, 30, 39, 0.05)',
-    },
-    fonts: {
-        main: '"Inter", sans-serif',
-    }
-};
+// Design Tokens - matching project NIC/Digital Secretariat style
+const navy = "#04122e";
+const navyLight = "#1a2744";
+const saffron = "#D4A843";
+const surface = "#f8f9fb";
+const surfaceDeep = "#edeef0";
+const white = "#ffffff";
+const gray400 = "#94a3b8";
+const gray600 = "#475569";
 
 const ComplaintsPanel = () => {
     const [complaints, setComplaints] = useState([]);
@@ -92,15 +76,15 @@ const ComplaintsPanel = () => {
     });
 
     return (
-        <div style={{ backgroundColor: tokens.colors.background, minHeight: '100%', fontFamily: tokens.fonts.main, color: tokens.colors.onSurface, padding: '48px' }}>
-            <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '40px' }}>
+        <div style={{ padding: '40px', backgroundColor: surface, minHeight: '100%', fontFamily: '"Public Sans", "Inter", sans-serif' }}>
+            <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px' }}>
                 
                 {/* Header Section */}
-                <header>
-                    <h2 style={{ fontSize: '11px', fontWeight: '700', color: tokens.colors.onSurfaceVariant, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                <header style={{ borderLeft: `6px solid ${navy}`, paddingLeft: '24px' }}>
+                    <h2 style={{ fontSize: '10px', fontWeight: '900', color: gray400, letterSpacing: '0.4em', textTransform: 'uppercase', marginBottom: '8px' }}>
                         The Sovereign Ledger
                     </h2>
-                    <h1 style={{ fontSize: '36px', fontWeight: '800', color: tokens.colors.primaryContainer, letterSpacing: '-0.02em', margin: 0 }}>
+                    <h1 style={{ fontSize: '24px', fontWeight: '900', color: navy, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
                         Voter Complaints Management
                     </h1>
                 </header>
@@ -108,38 +92,45 @@ const ComplaintsPanel = () => {
                 {/* Notifications */}
                 {message && (
                     <div style={{ 
-                        padding: '16px 24px', 
-                        backgroundColor: message.type === 'success' ? tokens.colors.successBg : tokens.colors.warningBg,
-                        borderLeft: `4px solid ${message.type === 'success' ? tokens.colors.success : tokens.colors.warning}`,
+                        padding: '20px', 
+                        backgroundColor: message.type === 'success' ? '#f0fdf4' : '#fef2f2',
+                        borderLeft: `4px solid ${message.type === 'success' ? '#22c55e' : '#ef4444'}`,
                         color: message.type === 'success' ? '#166534' : '#991b1b',
-                        fontSize: '13px', fontWeight: '600', borderRadius: '4px',
-                        boxShadow: tokens.shadows.ambient
+                        fontSize: '11px', fontWeight: '800', letterSpacing: '0.05em'
                     }}>
                         {message.text}
                     </div>
                 )}
 
                 {/* Stat Cards */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0' }}>
                     
-                    <div style={{ backgroundColor: tokens.colors.surface, padding: '24px', borderRadius: '12px', boxShadow: tokens.shadows.ambient, borderLeft: `3px solid ${tokens.colors.primaryContainer}` }}>
-                        <div style={{ fontSize: '12px', fontWeight: '700', color: tokens.colors.onSurfaceVariant, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Total Complaints</div>
-                        <div style={{ fontSize: '40px', fontWeight: '800', color: tokens.colors.onSurface, letterSpacing: '-0.02em' }}>{totalComplaints}</div>
+                    <div style={{ backgroundColor: white, padding: '32px', border: `1px solid ${surfaceDeep}`, borderRight: 'none' }}>
+                        <div style={{ fontSize: '10px', fontWeight: '900', color: gray400, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '12px' }}>Total Complaints</div>
+                        <div style={{ fontSize: '36px', fontWeight: '900', color: navy, letterSpacing: '-0.02em' }}>{totalComplaints}</div>
                     </div>
 
-                    <div style={{ backgroundColor: tokens.colors.surface, padding: '24px', borderRadius: '12px', boxShadow: tokens.shadows.ambient, borderLeft: `3px solid ${tokens.colors.warning}` }}>
-                        <div style={{ fontSize: '12px', fontWeight: '700', color: tokens.colors.onSurfaceVariant, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Open Complaints</div>
+                    <div style={{ backgroundColor: white, padding: '32px', border: `1px solid ${surfaceDeep}`, borderRight: 'none' }}>
+                        <div style={{ fontSize: '10px', fontWeight: '900', color: gray400, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '12px' }}>Open Complaints</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <div style={{ fontSize: '40px', fontWeight: '800', color: tokens.colors.onSurface, letterSpacing: '-0.02em' }}>{openComplaints}</div>
-                            <span style={{ backgroundColor: tokens.colors.warningBg, color: tokens.colors.warning, padding: '6px 12px', borderRadius: '9999px', fontSize: '12px', fontWeight: '700' }}>Requires Attention</span>
+                            <div style={{ fontSize: '36px', fontWeight: '900', color: navy, letterSpacing: '-0.02em' }}>{openComplaints}</div>
+                            <span style={{ 
+                                fontSize: '9px', fontWeight: '900', padding: '4px 8px', 
+                                backgroundColor: '#fffbeb', color: '#d97706', 
+                                border: '1px solid #fde68a', textTransform: 'uppercase'
+                            }}>Requires Attention</span>
                         </div>
                     </div>
 
-                    <div style={{ backgroundColor: tokens.colors.surface, padding: '24px', borderRadius: '12px', boxShadow: tokens.shadows.ambient, borderLeft: `3px solid ${tokens.colors.success}` }}>
-                        <div style={{ fontSize: '12px', fontWeight: '700', color: tokens.colors.onSurfaceVariant, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Resolved Complaints</div>
+                    <div style={{ backgroundColor: white, padding: '32px', border: `1px solid ${surfaceDeep}` }}>
+                        <div style={{ fontSize: '10px', fontWeight: '900', color: gray400, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '12px' }}>Resolved Complaints</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <div style={{ fontSize: '40px', fontWeight: '800', color: tokens.colors.onSurface, letterSpacing: '-0.02em' }}>{resolvedComplaints}</div>
-                            <span style={{ backgroundColor: tokens.colors.successBg, color: tokens.colors.success, padding: '6px 12px', borderRadius: '9999px', fontSize: '12px', fontWeight: '700' }}>Resolved</span>
+                            <div style={{ fontSize: '36px', fontWeight: '900', color: navy, letterSpacing: '-0.02em' }}>{resolvedComplaints}</div>
+                            <span style={{ 
+                                fontSize: '9px', fontWeight: '900', padding: '4px 8px',
+                                backgroundColor: '#f0fdf4', color: '#22c55e',
+                                border: '1px solid #bbf7d0', textTransform: 'uppercase'
+                            }}>Resolved</span>
                         </div>
                     </div>
 
@@ -147,46 +138,49 @@ const ComplaintsPanel = () => {
 
                 {/* Search Bar */}
                 <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                    <div style={{ flex: 1, position: 'relative' }}>
+                    <div style={{ flex: 1 }}>
                         <input 
                             type="text" 
                             placeholder="Search by Complaint ID, EPIC Number or Booth ID..." 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             style={{ 
-                                width: '100%', padding: '16px 24px', fontSize: '15px', 
-                                backgroundColor: tokens.colors.surface, border: 'none', 
-                                borderRadius: '8px', boxShadow: tokens.shadows.ambient, 
-                                color: tokens.colors.onSurface, outline: 'none', transition: 'all 0.2s ease',
-                                boxSizing: 'border-box'
+                                width: '100%', padding: '16px', fontSize: '13px', fontWeight: '700',
+                                backgroundColor: surface, border: `1px solid ${surfaceDeep}`, 
+                                color: navy, outline: 'none', boxSizing: 'border-box',
+                                fontFamily: '"Public Sans", "Inter", sans-serif'
                             }}
-                            onFocus={(e) => e.target.style.boxShadow = `0 0 0 2px ${tokens.colors.primaryContainer}30`}
-                            onBlur={(e) => e.target.style.boxShadow = tokens.shadows.ambient}
+                            onFocus={(e) => e.target.style.borderColor = navy}
+                            onBlur={(e) => e.target.style.borderColor = surfaceDeep}
                         />
                     </div>
                 </div>
 
                 {/* Data Table */}
-                <div style={{ backgroundColor: tokens.colors.surface, borderRadius: '16px', boxShadow: tokens.shadows.ambient, overflow: 'hidden' }}>
+                <div style={{ backgroundColor: white, border: `1px solid ${surfaceDeep}`, overflow: 'hidden' }}>
+                    <h3 style={{ fontSize: '12px', fontWeight: '900', color: navy, letterSpacing: '0.2em', textTransform: 'uppercase', padding: '24px 24px 0', margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ width: '4px', height: '16px', backgroundColor: saffron }} />
+                        Complaint Registry
+                    </h3>
                     <div style={{ overflowX: 'auto' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                            <thead style={{ backgroundColor: tokens.colors.surfaceLow }}>
-                                <tr>
-                                    <th style={{ padding: '20px 24px', color: tokens.colors.onSurfaceVariant, fontWeight: '700', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>ID</th>
-                                    <th style={{ padding: '20px 24px', color: tokens.colors.onSurfaceVariant, fontWeight: '700', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Date</th>
-                                    <th style={{ padding: '20px 24px', color: tokens.colors.onSurfaceVariant, fontWeight: '700', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Booth ID</th>
-                                    <th style={{ padding: '20px 24px', color: tokens.colors.onSurfaceVariant, fontWeight: '700', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Voter EPIC</th>
-                                    <th style={{ padding: '20px 24px', color: tokens.colors.onSurfaceVariant, fontWeight: '700', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Contact</th>
-                                    <th style={{ padding: '20px 24px', color: tokens.colors.onSurfaceVariant, fontWeight: '700', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Issue Type</th>
-                                    <th style={{ padding: '20px 24px', color: tokens.colors.onSurfaceVariant, fontWeight: '700', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</th>
-                                    <th style={{ padding: '20px 24px', color: tokens.colors.onSurfaceVariant, fontWeight: '700', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Action</th>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
+                            <thead>
+                                <tr style={{ borderBottom: `2px solid ${navy}`, textAlign: 'left' }}>
+                                    <th style={{ padding: '16px 24px', color: gray400, fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>ID</th>
+                                    <th style={{ padding: '16px 24px', color: gray400, fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Date</th>
+                                    <th style={{ padding: '16px 24px', color: gray400, fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Booth ID</th>
+                                    <th style={{ padding: '16px 24px', color: gray400, fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Voter EPIC</th>
+                                    <th style={{ padding: '16px 24px', color: gray400, fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Contact</th>
+                                    <th style={{ padding: '16px 24px', color: gray400, fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Issue Type</th>
+                                    <th style={{ padding: '16px 24px', color: gray400, fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Status</th>
+                                    <th style={{ padding: '16px 24px', color: gray400, fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {loading ? (
-                                    <tr><td colSpan="8" style={{ padding: '60px', textAlign: 'center', color: tokens.colors.onSurfaceVariant }}>Synchronizing with registry...</td></tr>
+                                    <tr><td colSpan="8" style={{ padding: '60px', textAlign: 'center', color: gray400, fontSize: '11px', fontWeight: '700' }}>Synchronizing with registry...</td></tr>
                                 ) : filteredComplaints.length === 0 ? (
-                                    <tr><td colSpan="8" style={{ padding: '60px', textAlign: 'center', color: tokens.colors.onSurfaceVariant, fontStyle: 'italic' }}>No complaints match your criteria.</td></tr>
+                                    <tr><td colSpan="8" style={{ padding: '60px', textAlign: 'center', color: gray400, fontStyle: 'italic', fontSize: '11px' }}>No complaints match your criteria.</td></tr>
                                 ) : (
                                     filteredComplaints.map((c, i) => {
                                         const isExpanded = expandedRows.has(c.complaint_id);
@@ -194,63 +188,65 @@ const ComplaintsPanel = () => {
                                         return (
                                             <React.Fragment key={c.complaint_id}>
                                                 <tr style={{ 
-                                                    backgroundColor: i % 2 === 0 ? 'transparent' : tokens.colors.surfaceLow,
-                                                    transition: 'background-color 0.2s',
-                                                    borderBottom: isExpanded ? 'none' : `1px solid ${tokens.colors.outlineVariant}`
+                                                    backgroundColor: i % 2 === 0 ? 'transparent' : surface,
+                                                    borderBottom: isExpanded ? 'none' : `1px solid ${surfaceDeep}`
                                                 }}>
-                                                    <td style={{ padding: '20px 24px', fontWeight: '800', color: tokens.colors.primaryContainer, fontSize: '14px' }}>#{c.complaint_id}</td>
-                                                    <td style={{ padding: '20px 24px', color: tokens.colors.onSurfaceVariant, fontSize: '13px' }}>{new Date(c.timestamp).toLocaleDateString()}</td>
-                                                    <td style={{ padding: '20px 24px', fontWeight: '700', color: tokens.colors.primaryContainer, fontSize: '13px' }}>{c.booth_id || 'UNKNOWN'}</td>
-                                                    <td style={{ padding: '20px 24px', fontWeight: '600', color: tokens.colors.onSurface, fontFamily: 'monospace', fontSize: '14px' }}>{c.voter_epic || c.epic || c.EPIC}</td>
-                                                    <td style={{ padding: '20px 24px', color: tokens.colors.onSurfaceVariant, fontSize: '13px' }}>{c.phone_number || c.Contact_no || 'N/A'}</td>
-                                                    <td style={{ padding: '20px 24px' }}>
+                                                    <td style={{ padding: '16px 24px', fontWeight: '800', color: navy, fontSize: '13px' }}>#{c.complaint_id}</td>
+                                                    <td style={{ padding: '16px 24px', color: gray600, fontSize: '12px', fontWeight: '600' }}>{new Date(c.timestamp).toLocaleDateString()}</td>
+                                                    <td style={{ padding: '16px 24px', fontWeight: '800', color: gray600, fontSize: '12px' }}>{c.booth_id || 'UNKNOWN'}</td>
+                                                    <td style={{ padding: '16px 24px', fontWeight: '700', color: navy, fontFamily: 'monospace', fontSize: '12px' }}>{c.voter_epic || c.epic || c.EPIC}</td>
+                                                    <td style={{ padding: '16px 24px', color: gray600, fontSize: '12px' }}>{c.phone_number || c.Contact_no || 'N/A'}</td>
+                                                    <td style={{ padding: '16px 24px' }}>
                                                         <span style={{ 
-                                                            fontSize: '11px', fontWeight: '700', padding: '6px 12px', backgroundColor: tokens.colors.surfaceHighest,
-                                                            color: tokens.colors.primaryContainer, borderRadius: '6px'
+                                                            fontSize: '9px', fontWeight: '900', padding: '4px 8px',
+                                                            backgroundColor: '#f0f9ff', color: '#0369a1',
+                                                            border: '1px solid #bae6fd', textTransform: 'uppercase'
                                                         }}>
                                                             {c.issue_type || c.Issue_Type}
                                                         </span>
                                                     </td>
-                                                    <td style={{ padding: '20px 24px' }}>
+                                                    <td style={{ padding: '16px 24px' }}>
                                                         <span style={{ 
-                                                            fontSize: '11px', fontWeight: '800', padding: '6px 12px', borderRadius: '9999px',
-                                                            backgroundColor: isOpen ? tokens.colors.warningBg : tokens.colors.successBg,
-                                                            color: isOpen ? tokens.colors.warning : tokens.colors.success,
-                                                            display: 'inline-flex', alignItems: 'center', gap: '6px'
+                                                            fontSize: '9px', fontWeight: '900', padding: '4px 8px',
+                                                            backgroundColor: isOpen ? '#fffbeb' : '#f0fdf4',
+                                                            color: isOpen ? '#d97706' : '#22c55e',
+                                                            border: `1px solid ${isOpen ? '#fde68a' : '#bbf7d0'}`,
+                                                            display: 'inline-flex', alignItems: 'center', gap: '6px',
+                                                            textTransform: 'uppercase'
                                                         }}>
-                                                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: isOpen ? tokens.colors.warning : tokens.colors.success }} />
+                                                            <span style={{ width: '6px', height: '6px', backgroundColor: isOpen ? '#d97706' : '#22c55e' }} />
                                                             {(c.status || c.Status || '').toUpperCase()}
                                                         </span>
                                                     </td>
-                                                    <td style={{ padding: '20px 24px' }}>
+                                                    <td style={{ padding: '16px 24px' }}>
                                                         <button 
                                                             onClick={() => toggleRowExpansion(c.complaint_id)}
                                                             style={{ 
-                                                                backgroundColor: tokens.colors.surfaceLow, color: tokens.colors.primaryContainer, 
-                                                                padding: '8px 16px', border: 'none', borderRadius: '6px',
-                                                                fontSize: '12px', fontWeight: '700', cursor: 'pointer',
-                                                                transition: 'all 0.2s', boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
+                                                                backgroundColor: surface, color: navy, 
+                                                                padding: '8px 16px', border: `1px solid ${surfaceDeep}`,
+                                                                fontSize: '10px', fontWeight: '900', cursor: 'pointer',
+                                                                transition: 'all 0.2s', textTransform: 'uppercase',
+                                                                letterSpacing: '0.05em'
                                                             }}
-                                                            onMouseOver={(e) => e.target.style.backgroundColor = tokens.colors.surfaceHigh}
-                                                            onMouseOut={(e) => e.target.style.backgroundColor = tokens.colors.surfaceLow}
+                                                            onMouseOver={(e) => { e.target.style.backgroundColor = navyLight; e.target.style.color = white; e.target.style.borderColor = navyLight; }}
+                                                            onMouseOut={(e) => { e.target.style.backgroundColor = surface; e.target.style.color = navy; e.target.style.borderColor = surfaceDeep; }}
                                                         >
                                                             {isExpanded ? 'Hide' : 'Details'}
                                                         </button>
                                                     </td>
                                                 </tr>
                                                 {isExpanded && (
-                                                    <tr style={{ backgroundColor: i % 2 === 0 ? 'transparent' : tokens.colors.surfaceLow, borderBottom: `1px solid ${tokens.colors.outlineVariant}` }}>
-                                                        <td colSpan="8" style={{ padding: '0 24px 32px 24px' }}>
+                                                    <tr style={{ backgroundColor: i % 2 === 0 ? 'transparent' : surface, borderBottom: `1px solid ${surfaceDeep}` }}>
+                                                        <td colSpan="8" style={{ padding: '0 24px 24px 24px' }}>
                                                             <div style={{ 
-                                                                backgroundColor: tokens.colors.surface, padding: '24px', borderRadius: '12px',
-                                                                boxShadow: tokens.shadows.ambient, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '32px'
+                                                                backgroundColor: white, padding: '24px', border: `1px solid ${surfaceDeep}`,
+                                                                display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '32px'
                                                             }}>
                                                                 <div style={{ flex: 1 }}>
-                                                                    <div style={{ fontSize: '11px', fontWeight: '700', color: tokens.colors.onSurfaceVariant, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
+                                                                    <div style={{ fontSize: '10px', fontWeight: '900', color: gray400, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>
                                                                         Detailed Description
                                                                     </div>
-                                                                    <div style={{ color: tokens.colors.onSurface, fontSize: '15px', lineHeight: '1.6' }}>
-                                                                        {/* Support both Description and subject field names */}
+                                                                    <div style={{ color: navy, fontSize: '13px', lineHeight: '1.6', fontWeight: '600' }}>
                                                                         {c.description || c.Description || c.subject || 'No description available for this record.'}
                                                                     </div>
                                                                 </div>
@@ -258,13 +254,16 @@ const ComplaintsPanel = () => {
                                                                     <button 
                                                                         onClick={() => handleResolve(c.complaint_id)}
                                                                         style={{ 
-                                                                            background: `linear-gradient(135deg, ${tokens.colors.primary}, ${tokens.colors.primaryContainer})`, 
-                                                                            color: '#fff', padding: '14px 28px', border: 'none', borderRadius: '8px',
-                                                                            fontSize: '13px', fontWeight: '800', cursor: 'pointer',
-                                                                            boxShadow: '0 4px 12px rgba(26, 35, 126, 0.2)', transition: 'all 0.2s transform'
+                                                                            backgroundColor: navy, color: white, 
+                                                                            padding: '16px 28px', border: 'none',
+                                                                            fontSize: '11px', fontWeight: '900', cursor: 'pointer',
+                                                                            textTransform: 'uppercase', letterSpacing: '0.2em',
+                                                                            borderBottom: `4px solid ${saffron}`,
+                                                                            transition: 'all 0.2s',
+                                                                            whiteSpace: 'nowrap'
                                                                         }}
-                                                                        onMouseOver={(e) => e.target.style.transform = 'translateY(-1px)'}
-                                                                        onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
+                                                                        onMouseOver={(e) => e.target.style.backgroundColor = navyLight}
+                                                                        onMouseOut={(e) => e.target.style.backgroundColor = navy}
                                                                     >
                                                                         Mark as Resolved
                                                                     </button>

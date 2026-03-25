@@ -8,7 +8,7 @@ import ComplaintsPanel from './ComplaintsPanel';
 
 const API_BASE = 'http://localhost:8000/api/v1/admin';
 
-const Dashboard = ({ tab }) => {
+const OverviewPanel = ({ tab }) => {
   const [overview, setOverview] = useState(null);
   const [booths, setBooths] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
@@ -199,22 +199,28 @@ const Dashboard = ({ tab }) => {
 
                   {/* Intelligence Stats */}
                   <div className="card card-dark" style={{ flex: 1 }}>
-                    <h3 style={{ color: 'var(--white)', opacity: 0.9 }}>INTERNAL INTELLIGENCE</h3>
+                    <h3 style={{ color: 'var(--white)', opacity: 0.9 }}>BOOTH RISK SUMMARY</h3>
                     <div className="summary-stats">
                       <div className="summary-row dark-row">
-                        <span className="summary-label dark-label">High-Risk Zones</span>
+                        <span className="summary-label dark-label">High-Risk Booths</span>
                         <span className="summary-value" style={{ color: 'var(--amber-500)' }}>
                           {String(booths.filter(b => b.risk_level === 'High').length).padStart(2, '0')}
                         </span>
                       </div>
                       <div className="summary-row dark-row">
-                        <span className="summary-label dark-label">Medium-Risk Zones</span>
+                        <span className="summary-label dark-label">Medium-Risk Booths</span>
                         <span className="summary-value" style={{ color: 'var(--blue-100)' }}>
                           {String(booths.filter(b => b.risk_level === 'Medium').length).padStart(2, '0')}
                         </span>
                       </div>
                       <div className="summary-row dark-row">
-                        <span className="summary-label dark-label">AI Recommendations</span>
+                        <span className="summary-label dark-label">Low-Risk Booths</span>
+                        <span className="summary-value" style={{ color: 'var(--green-500)' }}>
+                          {String(booths.filter(b => b.risk_level === 'Low').length).padStart(2, '0')}
+                        </span>
+                      </div>
+                      <div className="summary-row dark-row">
+                        <span className="summary-label dark-label">Recommendations</span>
                         <span className="summary-value" style={{ color: 'var(--amber-500)' }}>
                           {String(recommendations.length).padStart(2, '0')}
                         </span>
@@ -287,4 +293,4 @@ function StatCard({ label, value, valueStyle = {} }) {
   );
 }
 
-export default Dashboard;
+export default OverviewPanel;

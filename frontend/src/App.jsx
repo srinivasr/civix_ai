@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Dashboard from './components/Dashboard';
+import OverviewPanel from './components/OverviewPanel';
 import LodgeComplaintPanel from './components/LodgeComplaintPanel';
 import LoginPage from './components/LoginPage';
 import logo from './assets/logo.png';
@@ -252,7 +252,7 @@ function App() {
 
         <div className="content" style={{ padding: userRole === 'voter' ? '0' : '28px 32px' }}>
           {userRole === 'official' ? (
-            <Dashboard tab={tab} setTab={setTab} />
+            <OverviewPanel tab={tab} setTab={setTab} />
           ) : (
             <LodgeComplaintPanel boothId={boothId} />
           )}

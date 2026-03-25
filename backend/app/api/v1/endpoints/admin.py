@@ -9,6 +9,7 @@ from app.infrastructure.db.neo4j_client import neo4j_client
 router = APIRouter()
 
 COMPLAINTS_CSV = Path("data/uploads/complaints.csv")
+VOTERS_CSV = Path("data/uploads/voters.csv")
 
 
 @router.get("/overview")
@@ -40,12 +41,21 @@ def get_admin_overview():
         if total_complaints > 0:
             avg_open_ratio = total_open / total_complaints
 
+        total_voters = 0
+        if VOTERS_CSV.exists():
+            try:
+                df_voters = pd.read_csv(VOTERS_CSV)
+                total_voters = len(df_voters)
+            except Exception:
+                total_voters = 0
+
         return {
             "total_booths": total_booths,
             "total_complaints": total_complaints,
             "total_open_complaints": total_open,
             "total_resolved_complaints": total_resolved,
             "avg_open_ratio": round(avg_open_ratio, 2),
+            "total_voters": total_voters,
         }
 
     except Exception as e:

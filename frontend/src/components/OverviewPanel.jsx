@@ -109,7 +109,8 @@ const OverviewPanel = ({ tab }) => {
       <div style={{ display: tab === 'overview' ? 'block' : 'none' }}>
         <div className="fade-in">
           {/* ── Stat Cards ── */}
-          <div className="stats-grid">
+          <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
+            <StatCard label="TOTAL VOTERS" value={overview?.total_voters ?? '—'} />
             <StatCard label="TOTAL BOOTHS" value={overview?.total_booths ?? '—'} />
             <StatCard label="TOTAL COMPLAINTS" value={overview?.total_complaints ?? '—'} />
             <StatCard label="RESOLVED" value={overview?.total_resolved_complaints ?? '—'} />

@@ -64,33 +64,33 @@ const AskPanel = () => {
     }
 
     const visNodes = new DataSet(
-nodes.map(n => {
-  const nodeType = n.label;
-  const c = getColor(nodeType);
+      nodes.map(n => {
+        const nodeType = n.label;
+        const c = getColor(nodeType);
 
-return {
-  id: n.id,
-  label:
-    n.properties?.name ||
-    n.properties?.epic?.toString() ||
-    (n.properties?.house_no ? `House ${n.properties.house_no}` : null) ||
-    n.properties?.booth_id?.toString() ||
-    n.properties?.complaint_id?.toString() ||
-    nodeType,
+        return {
+          id: n.id,
+          label:
+            n.properties?.name ||
+            n.properties?.epic?.toString() ||
+            (n.properties?.house_no ? `House ${n.properties.house_no}` : null) ||
+            n.properties?.booth_id?.toString() ||
+            n.properties?.complaint_id?.toString() ||
+            nodeType,
 
-  color: {
-    background: c.background,
-    border: c.border,
-    highlight: { background: c.background, border: '#D4A843' }
-  },
-  raw: n, 
-  font: { color: c.fontColor, size: 12, face: 'Inter, sans-serif' },
-  shape: 'dot',
-  size: 18,
-  borderWidth: 2,
-};
-}))
-    ;
+          color: {
+            background: c.background,
+            border: c.border,
+            highlight: { background: c.background, border: '#D4A843' }
+          },
+          raw: n,
+          font: { color: c.fontColor, size: 12, face: 'Inter, sans-serif' },
+          shape: 'dot',
+          size: 18,
+          borderWidth: 2,
+        };
+      }))
+      ;
 
     const visEdges = new DataSet(
       edges.map((e, i) => ({
@@ -109,32 +109,32 @@ return {
       graphRef.current,
       { nodes: visNodes, edges: visEdges },
       {
-physics: {
-  enabled: true,
-  solver: 'forceAtlas2Based',
-  forceAtlas2Based: {
-    gravitationalConstant: -100,
-    centralGravity: 0.01,
-    springLength: 150,
-    springConstant: 0.08
-  },
-  stabilization: { iterations: 150 }
-},
+        physics: {
+          enabled: true,
+          solver: 'forceAtlas2Based',
+          forceAtlas2Based: {
+            gravitationalConstant: -100,
+            centralGravity: 0.01,
+            springLength: 150,
+            springConstant: 0.08
+          },
+          stabilization: { iterations: 150 }
+        },
         interaction: { hover: true, tooltipDelay: 200, zoomView: true },
         edges: { width: 1.5, selectionWidth: 2 },
         nodes: { borderWidth: 2 },
       }
     );
-  networkRef.current.on("click", function (params) {
-  if (params.nodes.length > 0) {
-    const nodeId = params.nodes[0];
-    const node = visNodes.get(nodeId);
+    networkRef.current.on("click", function (params) {
+      if (params.nodes.length > 0) {
+        const nodeId = params.nodes[0];
+        const node = visNodes.get(nodeId);
 
-    setSelectedNode(node.raw);
-  } else {
-    setSelectedNode(null);
-  }
-});
+        setSelectedNode(node.raw);
+      } else {
+        setSelectedNode(null);
+      }
+    });
 
     return () => {
       if (networkRef.current) {
@@ -155,9 +155,9 @@ physics: {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-           question: question.trim(),
-           shortcut: null
-           }),
+          question: question.trim(),
+          shortcut: null
+        }),
       });
       if (!res.ok) {
         const e = await res.json().catch(() => ({}));
@@ -171,31 +171,31 @@ physics: {
     }
   };
   const handleQuickQuery = async (shortcut) => {
-  setLoading(true);
-  setError(null);
-  setResult(null);
-  setSelectedNode(null);
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    setSelectedNode(null);
 
-  try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        question:null,
-        shortcut:shortcut
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: null,
+          shortcut: shortcut
 
-         }), 
-    });
+        }),
+      });
 
-    if (!res.ok) throw new Error("Error fetching data");
+      if (!res.ok) throw new Error("Error fetching data");
 
-    setResult(await res.json());
-  } catch (e) {
-    setError(e.message);
-  } finally {
-    setLoading(false);
-  }
-};
+      setResult(await res.json());
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const columns = result?.data?.length ? Object.keys(result.data[0]) : [];
 
@@ -293,7 +293,7 @@ physics: {
 
       {/* ── Results ── */}
       {result && (
-        <div className="fade-in">
+        <div className={isFullScreen ? '' : 'fade-in'}>
           {/* Answer */}
           <div className="answer-card" style={{ borderRadius: 0, boxShadow: 'none', border: '1px solid var(--gray-200)', padding: '24px', background: 'white', marginBottom: 24 }}>
             <h4 style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-400)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>Executive Summary</h4>
@@ -310,22 +310,17 @@ physics: {
             {result.graph?.nodes?.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
                 <div className={`graph-wrapper ${isFullScreen ? 'fullscreen' : ''}`} style={{ borderRadius: 0, border: '1px solid var(--gray-200)', boxShadow: 'none', overflow: 'hidden', background: 'white', position: 'relative' }}>
-                  <button 
-                    className="fullscreen-btn" 
+                  <button
+                    className="fullscreen-btn"
                     onClick={toggleFullScreen}
                     title={isFullScreen ? "Minimize" : "Maximize"}
-                    style={{ 
-                      borderRadius: 0, background: 'var(--gray-900)', color: 'white', border: 'none', 
-                      position: 'absolute', top: 16, right: 16, zIndex: 10, padding: '8px 12px',
-                      display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer'
-                    }}
                   >
                     {isFullScreen ? (
                       <>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 14, height: 14 }}>
                           <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
                         </svg>
-                        <span style={{ fontWeight: 700, fontSize: 11, textTransform: 'uppercase' }}>Minimize View</span>
+                        <span style={{ marginLeft: 6, fontWeight: 700, fontSize: 11, textTransform: 'uppercase' }}>Minimize View</span>
                       </>
                     ) : (
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 16, height: 16 }}>
@@ -341,10 +336,10 @@ physics: {
                 {selectedNode && (
                   <div className="card" style={{ borderRadius: 0, border: '1px solid var(--gray-200)', padding: 0, background: 'white' }}>
                     <div style={{ background: 'var(--blue-700)', padding: '16px 24px', display: 'flex', alignItems: 'center', gap: 16 }}>
-                      <div style={{ 
-                        width: 40, height: 40, background: 'var(--amber-500)', 
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                        fontSize: 18, color: 'var(--blue-700)', fontWeight: 900 
+                      <div style={{
+                        width: 40, height: 40, background: 'var(--amber-500)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 18, color: 'var(--blue-700)', fontWeight: 900
                       }}>
                         {selectedNode.label ? selectedNode.label.charAt(0) : '#'}
                       </div>
@@ -352,12 +347,12 @@ physics: {
                         ENTITY: {selectedNode.label || 'IDENTIFIED NODE'}
                       </h2>
                     </div>
-                    
+
                     <div style={{ padding: '24px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1px', background: 'var(--gray-100)' }}>
                       {Object.entries(selectedNode.properties || {}).map(([key, value]) => (
-                        <div key={key} style={{ 
-                          backgroundColor: 'white', 
-                          padding: '16px 20px', 
+                        <div key={key} style={{
+                          backgroundColor: 'white',
+                          padding: '16px 20px',
                         }}>
                           <div style={{ fontSize: 9, textTransform: 'uppercase', color: 'var(--gray-400)', letterSpacing: '0.1em', marginBottom: 6, fontWeight: 800 }}>
                             {key.replace(/_/g, ' ')}

@@ -9,7 +9,10 @@ from app.api.v1.endpoints.admin import router as admin_router
 from app.api.v1.endpoints.ask import router as ask_router
 from app.api.v1.endpoints.complaints import router as complaints_router
 from app.api.v1.endpoints.drives import router as drives_router
+from app.api.v1.endpoints.auth import router as auth_router
 from app.domain.services.seed_graph import seed
+from app.domain.models.user import User  # noqa: F401 – ensure table is registered
+from app.infrastructure.db.sqlite_client import init_db
 
 
 async def auto_update_csv():
@@ -64,6 +67,8 @@ async def auto_update_csv():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Initialize SQLite tables
+    init_db()
     # Seed initially if needed, and start watcher
     task = asyncio.create_task(auto_update_csv())
     yield
@@ -79,6 +84,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth_router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(upload_router, prefix="/api/v1/upload", tags=["Upload"])
 app.include_router(admin_router, prefix="/api/v1/admin", tags=["Admin"])
 app.include_router(ask_router, prefix="/api/v1", tags=["Ask"])

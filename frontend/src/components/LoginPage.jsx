@@ -46,14 +46,12 @@ export default function LoginPage() {
             }
         } catch (err) {
             console.error(err);
-            if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential' || err.code === 'auth/invalid-email') {
+            if (err.code === 'invalid-credentials') {
                 setError('Account not found or invalid credentials. Please register your access first.');
-            } else if (err.code === 'auth/email-already-in-use') {
+            } else if (err.code === 'email-already-in-use') {
                 setError('This ID is already registered. Please sign in instead.');
-            } else if (err.code === 'auth/weak-password') {
-                setError('Password is too weak. It must be at least 6 characters long.');
             } else {
-                setError(`Authentication failed: ${err.message || 'Please verify your details.'}`);
+                setError(err.message || 'Authentication failed. Please verify your details.');
             }
         }
         setLoading(false);

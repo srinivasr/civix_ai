@@ -9,6 +9,11 @@ class Settings(BaseSettings):
     NEO4J_PASSWORD: str
     OLLAMA_URL: str = "http://localhost:11434"
 
+    # JWT / Auth
+    JWT_SECRET_KEY: str = "change-me-to-a-real-secret-key-32chars!"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 hours
+
     model_config = SettingsConfigDict(
         env_file=Path(__file__).resolve().parent.parent.parent / ".env"
     )

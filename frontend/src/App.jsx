@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import LodgeComplaintPanel from './components/LodgeComplaintPanel';
 import LoginPage from './components/LoginPage';
+import logo from './assets/logo.png';
 import './index.css';
 
 const NAV_ITEMS = [
@@ -142,15 +143,9 @@ function App() {
       {userRole === 'official' && (
         <div className={`sidebar ${expanded ? 'expanded' : ''}`}>
           <div className="sidebar-top">
-            <div className="sidebar-brand">
-              <div className="logo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: 18, height: 18 }}>
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-              </div>
+            <div className="sidebar-brand" style={{ padding: '16px 20px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <span className="brand-name" style={{ letterSpacing: '1px' }}>CIVIX AI</span>
-                <span style={{ fontSize: 9, color: 'var(--blue-100)', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>National Intelligence</span>
+                <img src={logo} alt="Logo" style={{ height: '36px', objectFit: 'contain', objectPosition: 'left' }} />
               </div>
             </div>
 

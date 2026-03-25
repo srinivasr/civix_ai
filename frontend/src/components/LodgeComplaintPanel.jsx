@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logo from '../assets/logo.png';
 
 const LodgeComplaintPanel = ({ boothId }) => {
   const [epic, setEpic] = useState('');
@@ -95,8 +96,8 @@ const LodgeComplaintPanel = ({ boothId }) => {
               VOTER SERVICES PORTAL // BOOTH-LEVEL INTELLIGENCE
             </span>
             <div style={{ width: '1px', height: '12px', background: 'rgba(255,255,255,0.2)' }} />
-            <span style={{ fontSize: '11px', color: 'var(--amber-500)', fontWeight: '800', letterSpacing: '0.1em' }}>
-              NATIONAL SECRETARIAT (E-CIVIX)
+            <span style={{ fontSize: '11px', color: 'var(--amber-500)', fontWeight: '800', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              NATIONAL SECRETARIAT <img src={logo} alt="Logo" style={{ height: '14px', filter: 'brightness(0) invert(1)' }} />
             </span>
           </div>
         </div>

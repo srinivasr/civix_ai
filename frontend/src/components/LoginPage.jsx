@@ -3,6 +3,7 @@ import {
     ShieldCheck, User, Lock, Building2, MapPin,
     ArrowRight, Globe, BadgeCheck
 } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 export default function LoginPage({ onLogin }) {
     const [view, setView] = useState('login'); // 'signup' or 'login'
@@ -48,20 +49,13 @@ export default function LoginPage({ onLogin }) {
           }
         `}} />
                 <div style={{ maxWidth: '448px', position: 'relative', zIndex: 10 }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '48px' }}>
-                        <span style={{ fontWeight: 900, fontSize: '36px', letterSpacing: '-0.05em', lineHeight: 1, textTransform: 'uppercase', color: gold }}>
-                            Civix AI
-                        </span>
-                        <span style={{ color: slate500, fontSize: '10px', fontWeight: 900, letterSpacing: '0.4em', marginTop: '8px', textTransform: 'uppercase', borderTop: `1px solid #1e293b`, paddingTop: '8px', width: 'fit-content' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '64px' }}>
+                        <img src={logo} alt="Logo" style={{ height: '120px', objectFit: 'contain', objectPosition: 'left', display: 'block', marginBottom: '32px' }} />
+                        <div style={{ height: '6px', width: '80px', backgroundColor: gold, marginBottom: '24px' }} />
+                        <span style={{ color: slate500, fontSize: '12px', fontWeight: 900, letterSpacing: '0.4em', textTransform: 'uppercase', width: 'fit-content' }}>
                             Booth Intelligence
                         </span>
                     </div>
-
-                    <h1 style={{ color: white, fontSize: '48px', fontWeight: 900, letterSpacing: '-0.025em', marginBottom: '24px', lineHeight: 1, textTransform: 'uppercase' }}>
-                        National <br /> Agency Portal
-                    </h1>
-
-                    <div style={{ height: '6px', width: '80px', backgroundColor: gold, marginBottom: '40px' }} />
 
                     <p style={{ color: slate400, fontSize: '18px', fontWeight: 500, lineHeight: 1.625, maxWidth: '384px' }}>
                         Dedicated infrastructure for Booth Officials and Government Administration.
@@ -255,7 +249,7 @@ export default function LoginPage({ onLogin }) {
 
                     <footer style={{ marginTop: '48px', textAlign: 'center' }}>
                         <p style={{ fontSize: '10px', color: slate400, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', lineHeight: 1.6 }}>
-                            © 2026 Civix AI • National Data Network <br />
+                            © 2026 <img src={logo} alt="Logo" style={{ height: '14px', verticalAlign: 'middle', margin: '0 4px', filter: 'brightness(0)' }} /> • National Data Network <br />
                             <span style={{ color: gold }}>Secure Intelligence Node</span>
                         </p>
                     </footer>

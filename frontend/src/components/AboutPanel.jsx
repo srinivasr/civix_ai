@@ -1,5 +1,6 @@
 import React from 'react';
 import { User, ScanLine, Network, Bot } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 const AboutPanel = () => {
   return (
@@ -8,12 +9,12 @@ const AboutPanel = () => {
       <div className="card card-dark" style={{ padding: '40px 32px' }}>
         <div style={{ maxWidth: 800 }}>
           <h2 style={{ fontSize: 24, fontWeight: 900, letterSpacing: '0.05em', color: 'var(--white)', marginBottom: 16 }}>
-            ABOUT : CIVIX AI
+            ABOUT : <img src={logo} alt="Logo" style={{ height: '24px', verticalAlign: 'middle', marginLeft: '6px', marginBottom: '4px' }} />
           </h2>
           <p style={{ fontSize: 16, lineHeight: 1.6, opacity: 0.9, letterSpacing: '-0.01em' }}>
-            <strong>Civix AI</strong> is an advanced Civic Intelligence Platform engineered to modernize how
+            <strong><img src={logo} alt="Logo" style={{ height: '18px', verticalAlign: 'middle', marginRight: '4px', marginBottom: '2px' }} /></strong> is an advanced Civic Intelligence Platform engineered to modernize how
             local governments and civic leaders understand, predict, and respond to community needs.
-            By aggregating flat datasets regarding voters and localized complaints, Civix AI constructs
+            By aggregating flat datasets regarding voters and localized complaints, <img src={logo} alt="Logo" style={{ height: '18px', verticalAlign: 'middle', margin: '0 4px', marginBottom: '2px' }} /> constructs
             a highly interconnected <strong>Knowledge Graph</strong> — moving beyond traditional reactive complaint management.
           </p>
         </div>

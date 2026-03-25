@@ -77,6 +77,16 @@ const NAV_ITEMS = [
       </svg>
     ),
   },
+  {
+    id: 'schemes',
+    label: 'Schemes',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4" />
+        <path d="M4 6v12c0 1.1.9 2 2 2h14v-4H6a2 2 0 0 1-2-2z" />
+      </svg>
+    ),
+  },
 ];
 
 const ABOUT_ITEM = {
@@ -109,6 +119,7 @@ const PAGE_TITLES = {
   upload: 'Upload Data',
   drives: 'Drive Management',
   complaints: 'Voter Complaints Registry',
+  schemes: 'Voter Specific Schemes',
   about: 'About System',
   settings: 'Settings',
   lodge_complaint: 'Voter Complaint Portal',

@@ -5,6 +5,7 @@ import AboutPanel from './AboutPanel';
 import GraphAnalyticsPanel from './GraphAnalyticsPanel';
 import DrivesPanel from './DrivesPanel';
 import ComplaintsPanel from './ComplaintsPanel';
+import Schemes from './Schemes';
 
 const API_BASE = 'http://localhost:8000/api/v1/admin';
 
@@ -102,6 +103,12 @@ const OverviewPanel = ({ tab }) => {
       {tab === 'complaints' && (
         <div style={{ display: 'block' }}>
           <ComplaintsPanel />
+        </div>
+      )}
+
+      {tab === 'schemes' && (
+        <div style={{ display: 'block' }}>
+          <Schemes />
         </div>
       )}
 

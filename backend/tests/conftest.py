@@ -1,4 +1,4 @@
-"""Shared fixtures for the Civix AI test suite."""
+"""Shared fixtures for the AAkar test suite."""
 
 import pytest
 import pandas as pd

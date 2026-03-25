@@ -7,6 +7,7 @@
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Neo4j](https://img.shields.io/badge/Neo4j-018bff?style=for-the-badge&logo=neo4j&logoColor=white)](https://neo4j.com/)
 [![Ollama](https://img.shields.io/badge/Ollama-000000?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.ai/)
+[![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org/)
 [![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
 
 Transforming static civic data into a **predictive, booth-level Living Knowledge Graph**.
@@ -42,6 +43,7 @@ graph TD
     C -->|Louvain, PageRank| D[Risk Prediction System]
     D -->|Ollama LLM Output| E[AI Recommendations]
     E --> F((Decision-Support Dashboard))
+    G[(SQLite Auth DB)] -.->|Issues JWT Tokens| F
 ```
 
 ---
@@ -75,8 +77,8 @@ Our intelligence engine is powered by four main pillars:
 This is a monorepo containing both the FastAPI graphical backend and the React frontend.
 
 ```text
-civix_ai/
- ├── backend/            # FastAPI, Neo4j connection, LLM integration, OCR pipeline
+AAkar/
+ ├── backend/            # FastAPI, Neo4j, SQLite (Auth), LLM integration, OCR pipeline
  │   ├── app/            # Main application logic & endpoints
  │   ├── data/           # Uploaded CSVs and pipeline data
  │   ├── scripts/        # Database seeding & utility scripts
@@ -131,6 +133,7 @@ AAkar strictly enforces data privacy and ethical AI usage:
 
 - **No Personal Profiling**: Data is anonymized and strictly aggregated at the booth or ward level.
 - **No Mutating AI Queries**: The LLM prompt injection barriers are tightly scoped to completely block any commands that attempt to alter or destroy graph data.
+- **Secure Local Authentication**: Zero reliance on external cloud services. Authentication is securely handled natively via a local SQLite database and JWT encryptions.
 - **Role-Based Access**: Designed for authorized civic administrators and planners.
 
 ---

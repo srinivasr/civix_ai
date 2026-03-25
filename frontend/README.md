@@ -8,6 +8,7 @@ The presentation layer of **AAkar**. Built with speed, reactivity, and a premium
 
 - **Framework**: React 19 + Vite
 - **Styling**: Vanilla CSS (Dark Theme + Glassmorphism)
+- **Authentication**: Fully local JWT-based `AuthContext` (No external Firebase dependency)
 - **Graph Visualization**: `vis-network` & `vis-data` (Louvain Community clustering & PageRank)
 - **Tooling**: ESLint, Node.js
 
@@ -20,6 +21,7 @@ frontend/
  ├── public/             # Static Assets
  ├── src/
  │   ├── components/     # Reusable UI Blocks
+ │   │   ├── LoginPage.jsx         # Local JWT Authentication Gateway
  │   │   ├── Dashboard.jsx         # Main Metrics & Risk Overview
  │   │   ├── AskPanel.jsx          # Chat UI for Natural Language Cypher Queries
  │   │   ├── UploadPanel.jsx       # CSV & PDF File Dropzone with OCR status

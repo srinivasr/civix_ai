@@ -8,6 +8,7 @@ The robust Python-based backend for **AAkar**. It connects to a **Neo4j Knowledg
 
 - **Framework**: FastAPI (Asynchronous, fast, and highly performant)
 - **Database**: Neo4j (Graph Database for profound relationship tracking)
+- **Authentication**: SQLite (via SQLModel) & JWT (Zero-dependency local authentication)
 - **NLP/LLM**: Ollama (Locally hosted `tomasonjo/llama3-text2cypher-demo:8b_4bit`, 8b 4bit models supported)
 - **Data Extractor**: OpenCV, Tesseract OCR, pdf2image (for multi-threaded PDF ingest)
 - **Testing**: Pytest
@@ -68,6 +69,7 @@ NEO4J_URI=bolt://localhost:7687
 NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=your_password
 OLLAMA_URL=http://localhost:11434
+JWT_SECRET_KEY=your_secure_jwt_secret_key
 ```
 
 ### 4. Running the Development Server

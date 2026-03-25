@@ -1,7 +1,7 @@
 """
 SMS Notification Service — Fast2SMS Integration
 ================================================
-Production-grade SMS delivery service for the Civix AI complaint platform.
+Production-grade SMS delivery service for the AAkar complaint platform.
 Uses the Fast2SMS Bulk V2 API (Quick SMS route).
 """
 
@@ -154,7 +154,7 @@ def notify_by_doc_id(doc_id: int) -> dict:
 
     # ── Compose & send ──────────────────────────────────────────────────
     message = (
-        f"CIVIX-AI: Your complaint regarding {issue_classification} "
+        f"AAkar: Your complaint regarding {issue_classification} "
         f"(Ref: {doc_id}) is now RESOLVED. - Govt Secretariat"
     )
 
@@ -163,9 +163,9 @@ def notify_by_doc_id(doc_id: int) -> dict:
 
 if __name__ == "__main__":
     # Internal Test Harness
-    print("── CIVIX-AI: SMS SERVICE TEST HARNESS ──")
+    print("── AAkar: SMS SERVICE TEST HARNESS ──")
     test_number = "7696138229"  # Standard test number
-    test_msg = "CIVIX-AI: System check. SMS service is active."
+    test_msg = "AAkar: System check. SMS service is active."
     
     print(f"Sending test payload to {test_number}...")
     try:

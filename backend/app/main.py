@@ -74,7 +74,7 @@ async def lifespan(app: FastAPI):
     yield
     task.cancel()
 
-app = FastAPI(title="Civix AI Backend", lifespan=lifespan)
+app = FastAPI(title="AAkar Backend", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

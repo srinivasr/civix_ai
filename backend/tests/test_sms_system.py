@@ -26,12 +26,12 @@ from app.infrastructure.sms_service import send_sms  # noqa: E402
 def main() -> None:
     test_number = "917880601408"
     test_message = (
-        "CIVIX-AI [TEST]: This is an automated system verification message. "
+        "AAkar [TEST]: This is an automated system verification message. "
         "If you received this, the SMS gateway is operational."
     )
 
     print("=" * 60)
-    print("  CIVIX-AI — SMS Gateway Test")
+    print("  AAkar — SMS Gateway Test")
     print("=" * 60)
     print(f"  Recipient : {test_number}")
     print(f"  Message   : {test_message}")

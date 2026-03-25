@@ -120,7 +120,7 @@ async def lodge_complaint_sms(request: LodgeComplaintRequest):
 
         # Fire the acknowledgement SMS
         sms_message = (
-            f"CIVIX-AI: Your complaint (Ref: {next_id}) regarding "
+            f"AAkar: Your complaint (Ref: {next_id}) regarding "
             f"'{request.issue_type}' has been REGISTERED successfully. "
             f"We will keep you updated. - Govt Secretariat"
         )

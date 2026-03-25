@@ -1,6 +1,6 @@
 import sys
 import os
-sys.path.append("/home/lev/repos/civix_ai/backend")
+sys.path.append("/home/lev/repos/AAkar/backend")
 
 from backend.app.infrastructure.db.neo4j_client import neo4j_client
 import pandas as pd

@@ -20,6 +20,7 @@ const GraphAnalyticsPanel = () => {
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [tooltip, setTooltip] = useState({ show: false, x: 0, y: 0, text: '' });
   const containerRef = useRef(null);
   const networkRef = useRef(null);
 
@@ -48,8 +49,8 @@ const GraphAnalyticsPanel = () => {
           return {
             id: n.id,
             label: n.name,
-            value: Math.max(n.val || 1, 2),
-            title: `Type: ${n.label} | Risk: ${n.risk_level}`,
+            value: n.val,
+            hoverText: `Type: ${n.label} | Risk: ${n.risk_level}`,
             color: COMMUNITY_COLORS[cIdx],
             font: { color: '#ffffff', size: 10 }
           };
@@ -81,6 +82,10 @@ const GraphAnalyticsPanel = () => {
           arrows: { to: { enabled: true, scaleFactor: 0.5 } },
           smooth: { type: 'continuous' }
         },
+        interaction: {
+          hover: true,
+          tooltipDelay: 200
+        },
         physics: {
           enabled: true,
           solver: 'forceAtlas2Based',
@@ -107,9 +112,33 @@ const GraphAnalyticsPanel = () => {
         network.fit();
       });
 
+      network.on("hoverNode", function (params) {
+        const nodeId = params.node;
+        const posDOM = network.canvasToDOM(network.getPositions([nodeId])[nodeId]);
+        const node = nodes.get(nodeId);
+        
+        setTooltip({
+          show: true,
+          x: posDOM.x + 15,
+          y: posDOM.y - 15,
+          text: node.hoverText
+        });
+      });
+
+      network.on("blurNode", function () {
+        setTooltip({ show: false, x: 0, y: 0, text: '' });
+      });
+
+      network.on("zoom", () => setTooltip(t => ({ ...t, show: false })));
+      network.on("dragStart", () => setTooltip(t => ({ ...t, show: false })));
+
       return () => {
         resizeObserver.disconnect();
         if (networkRef.current) {
+          networkRef.current.off("hoverNode");
+          networkRef.current.off("blurNode");
+          networkRef.current.off("zoom");
+          networkRef.current.off("dragStart");
           networkRef.current.destroy();
           networkRef.current = null;
         }
@@ -151,10 +180,31 @@ const GraphAnalyticsPanel = () => {
         </div>
         <div style={{ flex: 1, position: 'relative', minHeight: '500px' }}>
           {graphData.nodes.length > 0 ? (
-            <div 
-              ref={containerRef} 
-              style={{ width: '100%', height: '100%', minHeight: '500px', background: '#1a2744' }} 
-            />
+            <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '500px' }}>
+              <div 
+                ref={containerRef} 
+                style={{ width: '100%', height: '100%', minHeight: '500px', background: '#1a2744' }} 
+              />
+              {tooltip.show && (
+                <div style={{
+                  position: 'absolute',
+                  left: tooltip.x,
+                  top: tooltip.y,
+                  background: 'rgba(15, 23, 42, 0.95)',
+                  color: '#fff',
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  fontSize: '12px',
+                  pointerEvents: 'none',
+                  zIndex: 100,
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.2)',
+                  backdropFilter: 'blur(4px)',
+                  border: '1px solid rgba(255,255,255,0.1)'
+                }}>
+                  {tooltip.text}
+                </div>
+              )}
+            </div>
           ) : (
             <div style={{ padding: 40, textAlign: 'center', color: 'var(--blue-100)' }}>
               No active nodes detected in the knowledge graph.

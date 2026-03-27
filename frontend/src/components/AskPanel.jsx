@@ -339,7 +339,7 @@ const AskPanel = () => {
                     )}
                   </button>
 
-                  <div className="graph-container" ref={graphRef} style={{ height: isFullScreen ? '100vh' : '600px', border: 'none' }} />
+                  <div className="graph-container" ref={graphRef} style={{ height: isFullScreen ? '100vh' : '800px', border: 'none' }} />
                 </div>
 
                 {/* 🔥 NODE DETAILS - AUTH STYLE */}

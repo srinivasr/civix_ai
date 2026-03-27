@@ -1204,7 +1204,7 @@ tbody tr:nth-child(odd) {
 .graph-wrapper {
   position: relative;
   width: 100%;
-  height: 420px;
+  height: 800px;
   background: var(--white);
   border: 1px solid var(--gray-100);
   border-radius: var(--radius-xl);

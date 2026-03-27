@@ -47,14 +47,17 @@ _RE_EPIC_VALID = re.compile(r"^[A-Z]{3}\d{7}$")
 _RE_HOUSE = re.compile(r"(?:house|मकान)", re.IGNORECASE)
 _RE_HOUSE_NUM = re.compile(r"\b\d+\b")
 _RE_ASSEMBLY = re.compile(r"Assembly.*?:\s*(.+)", re.IGNORECASE)
-_RE_SECTION = re.compile(r"Section.*?:\s*(.+)", re.IGNORECASE)
+_RE_SECTION = re.compile(
+    r"Section\s+No\s+and\s+Name\s+(.+)",
+    re.IGNORECASE
+)
 _RE_NAME_PREFIX = re.compile(r"^(.{1,3}\s*[:\-]\s*)")
 _RE_NAME_LEAD = re.compile(r"^[^a-zA-Z\u0900-\u097F]+")
 _RE_NAME_CHARS = re.compile(r"[^a-zA-Z\u0900-\u097F\s\.]")
 _RE_CAMEL = re.compile(r"([a-z])([A-Z])")
 _RE_SPACED_CAPS = re.compile(r"^([A-Z]\s+){3,}")
 _RE_WHITESPACE = re.compile(r"\s+")
-_RE_STATE_FIRST_PAGE = re.compile(r"S\d+\s+([A-Za-z\u0900-\u097F]+)")
+
 _RE_AC_FIRST_PAGE = re.compile(r"Assembly Constituency.*?(\d+)", re.IGNORECASE)
 _RE_BOOTH_FIRST_PAGE = re.compile(r"Polling Station.*?(\d+)", re.IGNORECASE)
 
@@ -133,7 +136,7 @@ def ocr_box(preprocessed: np.ndarray) -> str:
 def extract_header_text(bgr: np.ndarray) -> str:
     """OCR the top 15 % of a page BGR array for assembly/section/part metadata."""
     h = bgr.shape[0]
-    crop = cv2.cvtColor(bgr[0:int(h * 0.15), :], cv2.COLOR_BGR2RGB)
+    crop = cv2.cvtColor(bgr[0:int(h * 0.25), :], cv2.COLOR_BGR2RGB)
     return pytesseract.image_to_string(
         Image.fromarray(crop), lang="eng+hin", config="--psm 6"
     )
@@ -154,6 +157,13 @@ def parse_header(text: str) -> dict:
 
 def get_state_code(state):
     state = state.lower()
+
+    state = state.lower().strip()
+
+    # 🔥 OCR noise cleaning (IMPORTANT)
+    state = state.replace("u05", "").replace("u0s", "")
+    state = state.replace("s14", "").replace("s26", "")
+    state = state.strip()
 
     # English + Hindi matching
     if "mahar" in state or "महार" in state: return "MH"
@@ -183,6 +193,7 @@ def get_state_code(state):
     elif "nagaland" in state or "नागालैंड" in state: return "NL"
     elif "sikkim" in state or "सिक्किम" in state: return "SK"
     elif "arunachal" in state or "अरुणाचल" in state: return "AR"
+    elif "delhi" in state: return "DL"
 
     return "XX"
 
@@ -198,9 +209,23 @@ def extract_first_page_data(bgr: np.ndarray) -> dict:
     
     data = {"state": "", "ac_number": "", "booth_number": ""}
     
-    m_state = _RE_STATE_FIRST_PAGE.search(text)
-    if m_state:
-        data["state"] = m_state.group(1)
+    text_lower = text.lower()
+
+    # 🔥 DIRECT STATE DETECTION (ROBUST)
+    if "delhi" in text_lower or "nct" in text_lower or "nctofdelhi"  in text_lower or "newdelhi" in text_lower:
+        data["state"] = "delhi"
+
+    elif "manipur" in text_lower:
+        data["state"] = "manipur"
+
+    elif "sikkim" in text_lower:
+        data["state"] = "sikkim"
+    elif "maharashtra" in text_lower:
+        data["state"] = "mahar"
+
+    # fallback (optional)
+    else:
+        data["state"] = ""
         
     m_ac = _RE_AC_FIRST_PAGE.search(text)
     if m_ac:
